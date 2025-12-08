@@ -1,59 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# June Label (Toko Hijab Online)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyek E-commerce berbasis Laravel 11, Inertia.js (React), dan FilamentPHP.
 
-## About Laravel
+## Syarat Wajib (Prerequisites)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sebelum mulai, pastikan laptop Anda sudah terinstall:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* **PHP:** Versi 8.2 atau lebih baru (Wajib)
+* **Composer:** Untuk install library PHP
+* **Node.js & NPM:** Untuk compile aset React
+* **MySQL:** Database (Bisa dari Laragon, XAMPP, atau DBngin)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Cara Install
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Ikuti langkah ini satu per satu agar aplikasi berjalan lancar.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Clone Repository
+Download source code dari GitHub:
+```bash
+git clone https://github.com/USERNAME_KAMU/junelabel.git
+cd junelabel
+```
 
-## Laravel Sponsors
+### 2. Install Library
+Download semua paket PHP dan JavaScript yang dibutuhkan:
+```bash
+composer install
+npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Setup Environment
+Duplikat file contoh konfigurasi:
+```bash
+cp .env.example .env
+```
 
-### Premium Partners
+Lalu buka file `.env` di text editor, ubah bagian database sesuai konfigurasi laptop Anda:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=junelabel
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 4. Generate Key Aplikasi
+```bash
+php artisan key:generate
+```
 
-## Contributing
+### 5. Setup Database
+1. Buka aplikasi database manager (HeidiSQL / Laragon / TablePlus / phpMyAdmin)
+2. Buat database kosong baru dengan nama: `junelabel`
+3. Kembali ke terminal, jalankan migrasi untuk membuat tabel:
+```bash
+php artisan migrate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 6. Buat Akun Admin (Filament)
+Buat user untuk login ke dashboard admin:
+```bash
+php artisan make:filament-user
+```
+(Ikuti instruksi di layar untuk input Nama, Email, dan Password)
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Cara Menjalankan Aplikasi
 
-## Security Vulnerabilities
+Gunakan dua terminal yang berjalan bersamaan.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Terminal 1** (Backend Server):
+```bash
+php artisan serve
+```
 
-## License
+**Terminal 2** (Frontend Asset Watcher):
+```bash
+npm run dev
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Akses Link:**
+- **Toko (Frontend):** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Admin Panel:** [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+
+---
+
+## Catatan Penting
+
+1. Folder `vendor` dan `node_modules` tidak ada di GitHub, wajib menjalankan `composer install` & `npm install`
+2. File `.env` tidak ada di GitHub demi keamanan
+3. Jika muncul error **"Vite manifest not found"**, pastikan `npm run dev` sudah dijalankan minimal sekali
+4. Jika ada error tentang **"SQLSTATE"**, pastikan:
+   - Database sudah dibuat
+   - Koneksi database di `.env` sudah benar
+   - Service MySQL sedang berjalan
+5. Untuk development, tambahkan data dummy dengan:
+   ```bash
+   php artisan db:seed
+   ```
+
+## Troubleshooting
+
+**Error:** `Port 8000 already in use`
+```bash
+# Matikan server yang sedang berjalan, atau
+php artisan serve --port=8001
+```
+
+**Error:** `Class "Filament\Panel" not found`
+```bash
+composer require filament/filament
+```
+
+**Error:** `npm run dev tidak bekerja`
+```bash
+# Clear cache
+npm cache clean --force
+# Install ulang
+npm install
+```
