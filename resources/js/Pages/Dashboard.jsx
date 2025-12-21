@@ -1,6 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
+import Navbar from '../Layouts/Navbar';
+import Footer from '../Layouts/Footer';
+
 export default function Dashboard() {
     return (
         <AuthenticatedLayout
