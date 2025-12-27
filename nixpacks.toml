@@ -2,7 +2,7 @@
 providers = ["php", "node"]
 
 [phases.setup]
-nixPkgs = ["php83", "php83Extensions.pdo_pgsql", "php83Extensions.bcmath", "php83Extensions.intl", "php83Extensions.gd", "php83Packages.composer", "nodejs_20"]
+nixPkgs = ["php83", "php83Extensions.pdo_pgsql", "php83Extensions.bcmath", "php83Extensions.intl", "php83Extensions.gd", "php83Packages.composer"]
 
 [phases.build]
 cmds = [
