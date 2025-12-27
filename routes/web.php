@@ -7,15 +7,29 @@ use Inertia\Inertia;
 use App\Models\Product;
 
 Route::get('/', function () {
+    $products = Product::query()
+        ->where('is_active', true)
+        ->latest()
+        ->take(4)
+        ->get();
+
     return Inertia::render('Welcome', [
-        'products' => Product::query()
-            ->where('is_active', true)
-            ->with('category')
-            ->latest()
-            ->take(8)
-            ->get()
+        'products' => $products,
+        'canLogin' => Route::has('login'),
+        'laravelVersion' => Illuminate\Foundation\Application::VERSION,
+        'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
+
+Route::get('/product/{slug}', function ($slug) {
+    $product = Product::where('slug', $slug)
+        ->where('is_active', true)
+        ->firstOrFail();
+
+    return Inertia::render('Products/Products', [
+        'product' => $product
+    ]);
+})->name('product.detail');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
