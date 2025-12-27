@@ -1,4 +1,3 @@
-# nixpacks.toml
 providers = ["php", "node"]
 
 [phases.setup]
@@ -9,11 +8,9 @@ cmds = [
     "npm install",
     "npm run build",
     "composer install --no-dev --optimize-autoloader --no-interaction --no-progress",
-    "php artisan config:cache",
-    "php artisan route:cache",
-    "php artisan view:cache",
     "chmod -R 777 storage bootstrap/cache"
 ]
 
 [start]
-cmd = "php artisan migrate --force && php artisan storage:link && nginx -c /app/nginx.conf"
+# Cache dibuat saat START, bukan saat BUILD. Ini kuncinya.
+cmd = "php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan migrate --force && php artisan storage:link && nginx -c /app/nginx.conf"
