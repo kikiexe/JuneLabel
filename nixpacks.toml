@@ -16,4 +16,4 @@ cmds = [
 ]
 
 [start]
-cmd = "php artisan migrate --force && php artisan storage:link && nginx -c /assets/nginx.conf"
+cmd = "php artisan migrate --force && php artisan storage:link && nginx -c /app/nginx.conf"
