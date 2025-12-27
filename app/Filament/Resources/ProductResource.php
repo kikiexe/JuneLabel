@@ -17,7 +17,7 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Shop'; // Opsional: Biar rapi
+    protected static ?string $navigationGroup = 'Shop';
 
     public static function form(Form $form): Form
     {
@@ -35,6 +35,11 @@ class ProductResource extends Resource
                         ->live(onBlur: true)
                         ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
+                    Forms\Components\TextInput::make('sku')
+                        ->label('SKU (Kode Barang)')
+                        ->required()
+                        ->unique(ignoreRecord: true),    
+
                     Forms\Components\TextInput::make('slug')
                         ->disabled()
                         ->dehydrated()
@@ -50,11 +55,24 @@ class ProductResource extends Resource
                         ->default(true),
                 ]),
 
-                Forms\Components\Section::make('Gambar')->schema([
+                Forms\Components\Section::make('Gambar Produk')->schema([
+    
                     Forms\Components\FileUpload::make('image')
+                        ->label('Foto Utama (Thumbnail)')
                         ->directory('products')
                         ->image()
-                        ->imageEditor(),
+                        ->imageEditor()
+                        ->required(),
+                
+
+                    Forms\Components\FileUpload::make('gallery')
+                        ->label('Galeri Foto Lainnya (Pose Beda)')
+                        ->directory('products')
+                        ->image()
+                        ->multiple()
+                        ->reorderable()
+                        ->panelLayout('grid')
+                        ->columnSpanFull(),
                         
                     Forms\Components\RichEditor::make('description')
                         ->columnSpanFull(),

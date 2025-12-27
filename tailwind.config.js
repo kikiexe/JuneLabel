@@ -13,10 +13,11 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-            },
+            'noto-serif-hk': ['"Noto Serif HK"', 'serif'],
+            'montserrat': ['"Montserrat"', 'serif'],
+          },
         },
-    },
+      },
 
     plugins: [forms],
 };
