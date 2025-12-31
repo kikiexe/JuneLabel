@@ -1,10 +1,20 @@
 import { useState, useEffect } from "react";
 import { Link } from '@inertiajs/react';
+import { Menu, Search, ShoppingBag, User, X, Facebook, Mail, Instagram } from 'lucide-react';
+import Alert from "../../Utils/Alert";
 
 export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const handleEmailClick = (e) => {
+  e.preventDefault();
+  const user = "junelabelco";
+  const domain = "gmail.com";
+  window.location.href = `mailto:${user}@${domain}`;
+};
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,19 +24,37 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   const handleSearch = () => {
     if (searchQuery.trim()) {
       console.log(`Mencari: ${searchQuery}`);
     }
   };
 
-  const NavLink = ({ href, children }) => (
+  const handleDevFeature = (e) => {
+    e.preventDefault();
+    setAlertOpen(true);
+    setMobileMenuOpen(false);
+  };
+
+  const NavLink = ({ href, children, onClick, className = "" }) => (
     <Link 
       href={href} 
-      className="group relative text-sm font-medium text-[#7C634D] cursor-pointer"
+      onClick={onClick}
+      className={`group relative text-sm font-medium text-[#7C634D] cursor-pointer ${className}`}
     >
       {children}
-      <span className="absolute -bottom-1.5 left-0 w-full h-[2px] bg-[#7C634D] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></span>
+      <span className="absolute -bottom-1.5 left-0 w-full h-[2px] bg-[#7C634D] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out hidden xl:block"></span>
     </Link>
   );
 
@@ -36,11 +64,17 @@ export default function Navbar() {
         {`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
           .font-inter { font-family: 'Inter', sans-serif; }
+          .drawer-enter { transform: translateX(-100%); }
+          .drawer-enter-active { transform: translateX(0); transition: transform 300ms ease-out; }
+          .drawer-exit { transform: translateX(0); }
+          .drawer-exit-active { transform: translateX(-100%); transition: transform 300ms ease-in; }
         `}
       </style>
 
+      <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
+
       <nav 
-        className={`font-inter py-6 px-6 md:px-16 fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
           isScrolled ? 'shadow-sm' : ''
         }`}
         style={{ 
@@ -49,62 +83,72 @@ export default function Navbar() {
         }}
       >
         <div className="w-full flex items-center justify-between relative">
-            {/* Left - Menu Links */}
-            <div className="hidden md:flex items-center gap-10 flex-1">
-              <NavLink href="/new-arrival">NEW ARRIVAL</NavLink>
-              <NavLink href="/best-seller">BEST SELLER</NavLink>
-              <NavLink href="/collections">COLLECTIONS</NavLink>
+            <div className="hidden xl:flex items-center gap-10 flex-1">
+              <NavLink href="/new-arrival" onClick={handleDevFeature}>NEW ARRIVAL</NavLink>
+              <NavLink href="/best-seller" onClick={handleDevFeature}>BEST SELLER</NavLink>
+              
+              <div className="group relative">
+                <div className="py-4">
+                    <NavLink href="/collections" onClick={handleDevFeature} className="group-hover:text-[#7C634D]">COLLECTIONS</NavLink>
+                </div>
+                
+                <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
+                    <div className="flex flex-col py-4 px-6 space-y-4">
+                         {[
+                            'Pashmina Tencel',
+                            'Pashmina Viscose Rayon',
+                            'Paris Japan Ori',
+                            'Paris Jadul Premium',
+                            'Pashmina Inner Tencel',
+                            'Hijab Printing'
+                        ].map((item, index) => (
+                            <Link 
+                                key={index} 
+                                href={`/collections/${item.toLowerCase().replace(/\s+/g, '-')}`}
+                                className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
+                            >
+                                {item}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+              </div>
             </div>
 
-            {/* Mobile Menu Icon */}
-            <div className="md:hidden flex-shrink-0">
-               <button className="hover:opacity-70 transition-opacity">
-                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C634D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                   <line x1="3" y1="12" x2="21" y2="12"></line>
-                   <line x1="3" y1="6" x2="21" y2="6"></line>
-                   <line x1="3" y1="18" x2="21" y2="18"></line>
-                 </svg>
+            <div className="xl:hidden flex-shrink-0 flex-1 flex justify-start">
+               <button 
+                 onClick={() => setMobileMenuOpen(true)} 
+                 className="hover:opacity-70 transition-opacity p-1"
+               >
+                 <Menu size={24} color="#7C634D" strokeWidth={2} />
                </button>
             </div>
 
-            {/* Center - Logo */}
-            <div className="flex-shrink-0 mx-auto md:mx-0">
-              <Link href="/" className="block hover:opacity-70 transition-opacity">
+            <div className="hidden xl:block flex-shrink-0 mx-auto">
+              <Link href="/" className="block">
                 <img 
                   src="/images/junelabel.png" 
                   alt="Logo Junelabel"
-                  className="h-10 md:h-14 w-auto object-contain"
+                  className="h-9 xl:h-10 w-auto object-contain"
                 />
               </Link>
             </div>
 
-            {/* Right - Icons */}
-            <div className="flex items-center gap-5 md:gap-8 flex-1 justify-end">
+            <div className="flex items-center gap-5 xl:gap-8 flex-1 justify-end">
               <button onClick={() => setSearchOpen(!searchOpen)} className="hover:opacity-70 transition-opacity">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C634D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
+                <Search size={22} color="#7C634D" strokeWidth={2} />
               </button>
 
-              <Link href="/cart" className="hover:opacity-70 transition-opacity">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C634D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
+              <Link href="/cart" onClick={handleDevFeature} className="hover:opacity-70 transition-opacity">
+                <ShoppingBag size={22} color="#7C634D" strokeWidth={2} />
               </Link>
 
-              <Link href={route('login')} className="hover:opacity-70 transition-opacity hidden md:block">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C634D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+              <Link href={route('login')} onClick={handleDevFeature} className="hover:opacity-70 transition-opacity hidden xl:block">
+                <User size={22} color="#7C634D" strokeWidth={2} />
               </Link>
             </div>
         </div>
 
-        {/* Search Bar */}
         {searchOpen && (
             <div className="mt-4 pt-4 border-t border-[#7C634D]/20">
               <div className="flex gap-2 justify-center">
@@ -125,6 +169,95 @@ export default function Navbar() {
               </div>
             </div>
         )}
+
+        <div className={`fixed inset-0 z-[60] xl:hidden transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+            <div 
+                className="absolute inset-0 bg-black/40"
+                onClick={() => setMobileMenuOpen(false)}
+            ></div>
+
+            <div className={`absolute top-0 left-0 h-full w-[85%] max-w-sm bg-[#FFF6EC] shadow-xl transform transition-transform duration-300 ease-out flex flex-col ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                
+                <div className="px-6 py-4 flex items-center justify-between border-b border-[#7C634D]/10">
+                    <button onClick={() => setMobileMenuOpen(false)} className="hover:opacity-70">
+                        <X size={24} color="#7C634D" strokeWidth={1.5} />
+                    </button>
+
+                    <Link href="/" className="block" onClick={() => setMobileMenuOpen(false)}>
+                        <img src="/images/junelabel.png" alt="June Label" className="h-6 w-auto" />
+                    </Link>
+                </div>
+
+                <div className="flex-1 overflow-y-auto py-4">
+                    <div className="flex flex-col">
+                        <Link 
+                            href="/new-arrival" 
+                            onClick={handleDevFeature}
+                            className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
+                        >
+                            New Arrival
+                        </Link>
+                         <Link 
+                            href="/best-seller" 
+                            onClick={handleDevFeature}
+                            className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
+                        >
+                            Best Seller
+                        </Link>
+                        <Link 
+                            href="/collections" 
+                            onClick={handleDevFeature}
+                            className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
+                        >
+                            Collections
+                        </Link>
+                    </div>
+                </div>
+
+                 <div className="p-6 border-t border-[#7C634D]/10">
+                     <Link 
+                        href={route('login')}
+                        onClick={handleDevFeature} 
+                        className="block mb-6 text-sm font-medium text-[#7C634D] hover:opacity-70 uppercase tracking-wide"
+                    >
+                        Log In
+                    </Link>
+                    
+                    <div className="flex gap-4">
+                        <a 
+                            href="https://www.facebook.com/junelabel.co/" 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 rounded-full bg-[#7C634D] flex items-center justify-center text-[#FFF6EC] hover:opacity-80 transition-opacity"
+                        >
+                             <Facebook size={16} color="#FFF6EC" fill="currentColor" strokeWidth={0} />
+                        </a>
+                        <a 
+                            href="mailto:junelabelco@gmail.com"
+                            className="w-8 h-8 rounded-full bg-[#7C634D] flex items-center justify-center text-[#FFF6EC] hover:opacity-80 transition-opacity"
+                        >
+                             <Mail size={16} color="#FFF6EC" strokeWidth={2} />
+                        </a>
+                        <a 
+                            href="https://www.instagram.com/junelabel.co/" 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 rounded-full bg-[#7C634D] flex items-center justify-center text-[#FFF6EC] hover:opacity-80 transition-opacity"
+                        >
+                             <Instagram size={16} color="#FFF6EC" strokeWidth={2} />
+                        </a>
+                        <a 
+                            href="#" 
+                            className="w-8 h-8 rounded-full bg-[#7C634D] flex items-center justify-center text-[#FFF6EC] hover:opacity-80 transition-opacity"
+                        >
+                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path>
+                             </svg>
+                        </a>
+                    </div>
+                 </div>
+            </div>
+        </div>
       </nav>
     </>
   );

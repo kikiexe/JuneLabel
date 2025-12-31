@@ -7,7 +7,6 @@ export default function CopywritingSection() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
-          // Efek Parallax dihapus agar simpel seperti Hero
         }}
       >
         <div 
