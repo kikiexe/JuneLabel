@@ -5,6 +5,7 @@ import HeroSection from '@/Components/Sections/Home/Hero';
 import BestSellerSection from '@/Components/Sections/Home/BestSeller';
 import CopywritingSection from '@/Components/Sections/Home/Copywriting';
 import WhyChooseUsSection from '@/Components/Sections/Home/WhyUs';
+import NewArrivalSection from '@/Components/Sections/Home/NewArrival';
 
 export default function Welcome({ auth, products}) {
     return (
@@ -16,6 +17,7 @@ export default function Welcome({ auth, products}) {
                 <HeroSection />
                 <BestSellerSection products={products}/>
                 <CopywritingSection />
+                <NewArrivalSection products={products}/>
                 <WhyChooseUsSection />
             </main>
             <Footer />
