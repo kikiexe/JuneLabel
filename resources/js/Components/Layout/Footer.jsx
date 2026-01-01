@@ -38,18 +38,18 @@ export default function Footer() {
 						<h3 className="text-lg font-bold mb-4">Informasi</h3>
 						<ul className="space-y-2 mb-6 text-sm">
 							<li>
-								<Link href="/syarat-ketentuan" className="hover:opacity-70 transition-opacity">
+								<Link href="/terms-conditions" className="hover:opacity-70 transition-opacity">
 									Syarat dan Ketentuan
 								</Link>
 							</li>
 							<li>
-								<Link href="/tentang" className="hover:opacity-70 transition-opacity">
+								<Link href="/about-us" className="hover:opacity-70 transition-opacity">
 									Tentang Kami
 								</Link>
 							</li>
 							<li>
 								<Link href="/privacy-policy" className="hover:opacity-70 transition-opacity">
-									Privacy Policy
+									Kebijakan Privasi
 								</Link>
 							</li>
 							<li>
