@@ -16,7 +16,7 @@ class Product extends Model
 
     protected $fillable = [
         'category_id', 'sku', 'name', 'slug', 'image', 'gallery',
-        'description', 'price', 'stock', 'weight', 'is_active'
+        'description', 'price', 'stock', 'weight', 'is_active', 'is_best_seller'
     ];
 
     /**
@@ -74,6 +74,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'is_active' => 'boolean',
+        'is_best_seller' => 'boolean',
         'gallery' => 'array',
     ];
 

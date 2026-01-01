@@ -53,6 +53,10 @@ class ProductResource extends Resource
                     Forms\Components\Toggle::make('is_active')
                         ->label('Aktif')
                         ->default(true),
+
+                    Forms\Components\Toggle::make('is_best_seller')
+                        ->label('Best Seller')
+                        ->default(false),
                 ]),
 
                 Forms\Components\Section::make('Gambar Produk')->schema([
@@ -89,6 +93,7 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category.name')->label('Kategori'),
                 Tables\Columns\TextColumn::make('price')->money('IDR'),
                 Tables\Columns\ToggleColumn::make('is_active'),
+                Tables\Columns\ToggleColumn::make('is_best_seller')->label('Best Seller'),
             ])
             ->filters([
                 //

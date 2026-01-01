@@ -2,8 +2,9 @@ import { Head } from '@inertiajs/react';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import DetailSection from '@/Components/Sections/Product/Detail';
+import RelatedProducts from '@/Components/Sections/Product/Related';
 
-export default function ProductPage({ auth, product }) {
+export default function ProductPage({ auth, product, relatedProducts }) {
     return (
         <div className="min-h-screen flex flex-col bg-[#FFF6EC]">
             <Head title={`${product.name} - June Label`} />
@@ -12,6 +13,7 @@ export default function ProductPage({ auth, product }) {
 
             <main className="flex-grow">
                 <DetailSection product={product} auth={auth} />
+                <RelatedProducts products={relatedProducts} />
             </main>
 
             <Footer />

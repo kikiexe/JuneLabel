@@ -7,14 +7,22 @@ use Inertia\Inertia;
 use App\Models\Product;
 
 Route::get('/', function () {
-    $products = Product::query()
+    $newArrivals = Product::query()
         ->where('is_active', true)
         ->latest()
         ->take(4)
         ->get();
 
+    $bestSellers = Product::query()
+        ->where('is_active', true)
+        ->where('is_best_seller', true)
+        ->latest()
+        ->take(4)
+        ->get();
+
     return Inertia::render('Welcome', [
-        'products' => $products,
+        'newArrivals' => $newArrivals,
+        'bestSellers' => $bestSellers,
         'canLogin' => Route::has('login'),
         'laravelVersion' => Illuminate\Foundation\Application::VERSION,
         'phpVersion' => PHP_VERSION,
@@ -26,8 +34,15 @@ Route::get('/product/{slug}', function ($slug) {
         ->where('is_active', true)
         ->firstOrFail();
 
+    $relatedProducts = Product::where('id', '!=', $product->id)
+        ->where('is_active', true)
+        ->inRandomOrder()
+        ->take(4)
+        ->get();
+
     return Inertia::render('Products/Products', [
-        'product' => $product
+        'product' => $product,
+        'relatedProducts' => $relatedProducts
     ]);
 })->name('product.detail');
 

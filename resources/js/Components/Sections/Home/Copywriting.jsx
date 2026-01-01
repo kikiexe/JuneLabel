@@ -7,5 +7,5 @@ export default function CopywritingSection() {
         className="w-full h-auto xl:h-screen xl:object-cover"
       />
     </section>
-    );
-  }
+  );
+}

@@ -1,10 +1,19 @@
+import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import Alert from '../../../Utils/Alert';
 
 export default function BestSellerSection({ products }) {
   const productList = products || [];
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const handleDevFeature = (e) => {
+    e.preventDefault();
+    setAlertOpen(true);
+  };
 
   return (
     <section style={{ backgroundColor: '#E6CBC0' }} className="py-12 md:py-20 font-inter">
+      <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
         
         <div className="text-center mb-10 md:mb-16">
@@ -14,9 +23,6 @@ export default function BestSellerSection({ products }) {
           >
             Best Seller
           </h2>
-          <p className="text-sm md:text-lg lg:text-xl mt-3 md:mt-4 font-noto-serif-hk px-4">
-            "Your Everyday Comfort. Discover Our Signature Tencel Pashmina."
-          </p>
         </div>
 
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-6 md:gap-y-10 lg:gap-8 mb-12 md:mb-16">
@@ -81,6 +87,7 @@ export default function BestSellerSection({ products }) {
 
         <div className="text-center">
           <button
+            onClick={handleDevFeature}
             className="group relative px-8 py-2 md:px-10 md:py-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300"
             style={{ borderRadius: '0px' }}
           >

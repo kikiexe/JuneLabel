@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from '@inertiajs/react';
-import { Menu, Search, ShoppingBag, User, X, Facebook, Mail, Instagram } from 'lucide-react';
+import { Menu, Search, ShoppingBag, User, X, Facebook, Mail, Instagram, ChevronDown, ChevronUp } from 'lucide-react';
 import Alert from "../../Utils/Alert";
 
 export default function Navbar() {
@@ -9,6 +9,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [collectionsOpen, setCollectionsOpen] = useState(false);
   const handleEmailClick = (e) => {
   e.preventDefault();
   const user = "junelabelco";
@@ -104,7 +105,8 @@ export default function Navbar() {
                         ].map((item, index) => (
                             <Link 
                                 key={index} 
-                                href={`/collections/${item.toLowerCase().replace(/\s+/g, '-')}`}
+                                href="#"
+                                onClick={handleDevFeature}
                                 className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
                             >
                                 {item}
@@ -204,13 +206,36 @@ export default function Navbar() {
                         >
                             Best Seller
                         </Link>
-                        <Link 
-                            href="/collections" 
-                            onClick={handleDevFeature}
-                            className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
+                        <button 
+                            onClick={() => setCollectionsOpen(!collectionsOpen)}
+                            className="w-full flex items-center justify-between px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                         >
-                            Collections
-                        </Link>
+                            <span>Collections</span>
+                            {collectionsOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </button>
+                        
+                        {/* Submenu Mobile */}
+                        <div className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#F8F1EB] ${collectionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="flex flex-col py-2">
+                                {[
+                                    'Pashmina Tencel',
+                                    'Pashmina Viscose Rayon',
+                                    'Paris Japan Ori',
+                                    'Paris Jadul Premium',
+                                    'Pashmina Inner Tencel',
+                                    'Hijab Printing'
+                                ].map((item, index) => (
+                                    <Link 
+                                        key={index} 
+                                        href="#"
+                                        onClick={handleDevFeature}
+                                        className="pl-10 pr-6 py-3 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
+                                    >
+                                        {item}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -248,6 +273,7 @@ export default function Navbar() {
                         </a>
                         <a 
                             href="#" 
+                            onClick={handleDevFeature}
                             className="w-8 h-8 rounded-full bg-[#7C634D] flex items-center justify-center text-[#FFF6EC] hover:opacity-80 transition-opacity"
                         >
                              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">

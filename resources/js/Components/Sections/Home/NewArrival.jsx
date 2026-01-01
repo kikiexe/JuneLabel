@@ -1,90 +1,74 @@
+import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import Alert from '../../../Utils/Alert';
 
 export default function NewArrivalSection({ products }) {
-  // Ambil produk terakhir ditambahkan (sorted by created_at descending)
   const productList = products || [];
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const handleDevFeature = (e) => {
+    e.preventDefault();
+    setAlertOpen(true);
+  };
 
   return (
-    <section style={{ backgroundColor: '#E6CBC0' }} className="py-16 font-inter">
-      <div className="w-full max-w-[1920px] mx-auto px-6 md:px-16">
+    <section style={{ backgroundColor: '#E6CBC0' }} className="py-12 md:py-20 font-inter">
+      <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
         
-        {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <h2 
-            className="text-5xl md:text-6xl font-noto-serif-hk font-semibold tracking-tight mb-4"
-            style={{ 
-              color: '#7C634D',
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)'
-            }}
+            className="text-3xl md:text-5xl lg:text-6xl font-noto-serif-hk font-semibold tracking-tight"
+            style={{ color: '#7C634D' }}
           >
             New Arrival
           </h2>
-          <p className="text-xl font-noto-serif-hk" style={{ color: '#7C634D', opacity: 0.8 }}>
-            "Fresh Styles Just Landed. Explore Our Latest Collection."
-          </p>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-16">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-6 md:gap-y-10 lg:gap-8 mb-12 md:mb-16">
           {productList.map((product) => {
             
-            // Logic hover image
             const hoverImage = (product.gallery && product.gallery.length > 0) 
                 ? product.gallery[0] 
                 : product.image;
 
+            const commonImgStyle = { 
+                objectPosition: 'center top', 
+                transform: 'scale(1.1)' 
+            };
+
             return (
               <div key={product.id} className="group cursor-pointer">
                 
-                {/* Link ke Halaman Detail */}
                 <Link href={route('product.detail', product.slug)}>
                   
-                  {/* Image Container dengan border dan shadow berbeda */}
-                  <div 
-                    className="relative overflow-hidden mb-5 bg-white shadow-md transition-shadow duration-300 group-hover:shadow-xl" 
-                    style={{ 
-                      paddingBottom: '125%',
-                      border: '1px solid #7C634D20'
-                    }}
-                  >
+                  <div className="relative overflow-hidden mb-3 md:mb-5 bg-white rounded-sm shadow-sm w-full" style={{ paddingBottom: '133.33%' }}>
                     
-                    {/* Gambar Utama */}
                     <img 
                       src={`/storage/${product.image}`}
                       alt={product.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-100 group-hover:opacity-0 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-100 group-hover:opacity-0"
+                      style={commonImgStyle}
                     />
 
-                    {/* Gambar Hover */}
                     <img 
                       src={`/storage/${hoverImage}`}
                       alt={`${product.name} Hover`}
-                      className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0 group-hover:opacity-100"
+                      style={commonImgStyle}
                     />
-
-                    {/* Badge "NEW" di pojok kiri atas */}
-                    <div 
-                      className="absolute top-3 left-3 px-3 py-1 text-xs font-bold tracking-wider"
-                      style={{ 
-                        backgroundColor: '#7C634D',
-                        color: '#FFF6EC'
-                      }}
-                    >
-                      NEW
-                    </div>
 
                   </div>
                   
-                  {/* Product Info */}
-                  <div className="text-center px-2">
+                  <div className="text-center px-1">
                     <h3 
-                      className="text-base md:text-lg font-semibold mb-2 transition-colors duration-300 group-hover:opacity-70"
+                      className="text-sm md:text-lg font-medium md:font-semibold lg:font-semibold mb-1 leading-tight line-clamp-2"
                       style={{ color: '#7C634D' }}
                     >
                       {product.name}
                     </h3>
                     <p 
-                      className="text-sm md:text-base font-light"
+                      className="text-xs md:text-base font-light mt-1"
                       style={{ color: '#7C634D', opacity: 0.7 }}
                     >
                       {new Intl.NumberFormat('id-ID', { 
@@ -101,14 +85,15 @@ export default function NewArrivalSection({ products }) {
           })}
         </div>
 
-        {/* View All Button */}
         <div className="text-center">
           <button
-            className="group relative px-10 py-3 text-xs font-bold uppercase tracking-[0.2em] border border-[#7C634D] overflow-hidden transition-all duration-300 hover:shadow-lg"
+            onClick={handleDevFeature}
+            className="group relative px-8 py-2 md:px-10 md:py-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300"
             style={{ borderRadius: '0px' }}
           >
-            <span className="absolute inset-0 bg-[#7C634D] transition-transform duration-500 ease-out group-hover:-translate-x-full"></span>
-            <span className="relative z-10 text-[#FFF6EC] transition-colors duration-500 group-hover:text-[#7C634D]">
+            <span className="absolute inset-0 w-full h-full bg-[#FFFFFF] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
+            
+            <span className="relative z-10 text-[#FFFFFF] transition-colors duration-500 group-hover:text-[#7C634D]">
               View All Products
             </span>
           </button>
