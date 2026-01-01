@@ -38,7 +38,7 @@ export default function WhyChooseUsSection() {
 		<section style={{ backgroundColor: "#FFF6EC" }} className="py-2">
 			<div className="w-full px-6 max-w-screen-2xl mx-auto">
 				{/* Images Grid */}
-				<div className="grid grid-cols-6 gap-10">
+				<div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5 lg:gap-10">
 					{images.map((item) => (
 						<div
 							key={item.id}
