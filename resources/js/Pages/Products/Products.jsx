@@ -4,6 +4,16 @@ import Footer from '@/Components/Layout/Footer';
 import DetailSection from '@/Components/Sections/Product/Detail';
 import RelatedProducts from '@/Components/Sections/Product/Related';
 
+/**
+ * ProductPage Component
+ * 
+ * Halaman detail produk tunggal.
+ * Menggabungkan komponen DetailSection dan RelatedProducts.
+ * 
+ * @param {Object} auth - Data user session
+ * @param {Object} product - Data detail produk utama
+ * @param {Array} relatedProducts - Daftar produk rekomendasi
+ */
 export default function ProductPage({ auth, product, relatedProducts }) {
     return (
         <div className="min-h-screen flex flex-col bg-[#FFF6EC]">

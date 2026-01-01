@@ -4,11 +4,24 @@ import { Minus, Plus, Facebook, Twitter, MessageCircle } from 'lucide-react';
 import Alert from '../../../Utils/Alert';
 import RelatedProducts from '../Product/Related';
 
+/**
+ * DetailSection Component
+ * 
+ * Menampilkan detail lengkap produk termasuk:
+ * - Galeri gambar (Image Gallery) dengan scroll/carousel
+ * - Informasi produk (Nama, Harga, Deskripsi)
+ * - Pilihan quantity dan tombol Add to Cart
+ * 
+ * @param {Object} product - Data produk dari backend
+ * @param {Object} auth - Data autentikasi user
+ */
 export default function DetailSection({ product, auth }) {
     const [quantity, setQuantity] = useState(1);
     const [alertOpen, setAlertOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+    // Menggabungkan gambar utama dengan gallery tambahan
+    // Agar semua gambar bisa ditampilkan dalam satu slider
     const allImages = [
         product.image, 
         ...(product.gallery || [])
@@ -28,16 +41,19 @@ export default function DetailSection({ product, auth }) {
                 
                 <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
                     
-                    {/* BAGIAN KIRI: IMAGE GALLERY */}
+                    {/* BAGIAN KIRI: IMAGE GALLERY 
+                        Menggunakan CSS scroll-snap untuk efek carousel yang mulus
+                        pada tampilan mobile, dan grid/list pada desktop jika needed.
+                     */}
                     <div className="w-full lg:w-[60%] relative group">
                         <div 
                             className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none gap-0 lg:gap-4 no-scrollbar scroll-smooth"
                             onScroll={(e) => {
+                                // Logic untuk mendeteksi index gambar aktif saat discroll
                                 const scrollLeft = e.target.scrollLeft;
                                 const width = e.target.offsetWidth;
                                 const index = Math.round(scrollLeft / width);
-                                // Optimization: Only update if changed prevents excessive re-renders
-                                // But useState setter already handles identity check usually.
+                                // Set state hanya jika index berubah
                                 setCurrentImageIndex(index);
                             }}
                         >
@@ -70,7 +86,9 @@ export default function DetailSection({ product, auth }) {
                         </div>
                     </div>
 
-                    {/* BAGIAN KANAN: INFO PRODUK (Sticky) */}
+                    {/* BAGIAN KANAN: INFO PRODUK (Sticky) 
+                        Dibuat sticky agar tetap terlihat saat user scroll gambar yang panjang
+                     */}
                     <div className="w-full lg:w-[40%] flex flex-col lg:sticky lg:top-24 h-fit pt-2">
                         
                         {/* Brand */}

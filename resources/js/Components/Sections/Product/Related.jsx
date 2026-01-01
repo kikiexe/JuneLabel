@@ -2,6 +2,14 @@ import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 import Alert from '../../../Utils/Alert';
 
+/**
+ * RelatedProducts Component
+ * 
+ * Menampilkan daftar produk terkait (recommendations).
+ * Biasanya ditampilkan di bagian bawah halaman detail produk.
+ * 
+ * @param {Array} products - Array of product objects
+ */
 export default function RelatedProducts({ products }) {
     const [alertOpen, setAlertOpen] = useState(false);
     
@@ -10,6 +18,7 @@ export default function RelatedProducts({ products }) {
         setAlertOpen(true);
     };
 
+    // Safety check: Jangan render section jika tidak ada produk
     if (!products || products.length === 0) return null;
 
     return (
@@ -22,6 +31,10 @@ export default function RelatedProducts({ products }) {
                 </h3>
             </div>
 
+            {/* Container Produk
+                - Mobile: Horizontal Scroll (snap-x)
+                - Desktop: Grid 4 kolom
+             */}
             <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 lg:grid lg:grid-cols-4 lg:gap-8 lg:overflow-visible no-scrollbar pb-6 lg:pb-0 -mx-6 px-6 lg:mx-0 lg:px-0">
                 {products.map((product) => {
                      const hoverImage = (product.gallery && product.gallery.length > 0) 

@@ -7,6 +7,16 @@ import CopywritingSection from '@/Components/Sections/Home/Copywriting';
 import WhyChooseUsSection from '@/Components/Sections/Home/WhyUs';
 import NewArrivalSection from '@/Components/Sections/Home/NewArrival';
 
+/**
+ * Welcome Page (Homepage)
+ * 
+ * Halaman utama aplikasi (Landing Page).
+ * Menampilkan berbagai section seperti Hero, Best Seller, dll.
+ * 
+ * @param {Object} auth - Data user login
+ * @param {Array} newArrivals - Data produk terbaru dari controller
+ * @param {Array} bestSellers - Data produk terlaris dari controller
+ */
 export default function Welcome({ auth, newArrivals, bestSellers }) {
     return (
         <>

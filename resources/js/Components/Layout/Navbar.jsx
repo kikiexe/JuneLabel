@@ -3,6 +3,17 @@ import { Link } from '@inertiajs/react';
 import { Menu, Search, ShoppingBag, User, X, Facebook, Mail, Instagram, ChevronDown, ChevronUp } from 'lucide-react';
 import Alert from "../../Utils/Alert";
 
+/**
+ * Navbar Component
+ * 
+ * Komponen navigasi utama yang responsif.
+ * Fitur utama:
+ * - Menangani scroll untuk mengubah background navigation
+ * - Mobile menu dengan hamburger icon
+ * - Dropdown untuk Collections
+ * - Pencarian (Search)
+ * - Link login dan keranjang belanja
+ */
 export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +28,8 @@ export default function Navbar() {
   window.location.href = `mailto:${user}@${domain}`;
 };
 
+  // Effect untuk menangani perubahan background navbar saat discroll
+  // Jika scroll > 50px, state isScrolled menjadi true -> background berubah
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -25,6 +38,8 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Effect untuk me-lock scroll body saat menu mobile terbuka
+  // Mencegah user scroll halaman utama saat sedang melihat menu
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -48,6 +63,8 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
+  // Komponen Helper untuk Link Navigasi Desktop
+  // Termasuk animasi garis bawah (underline) saat hover
   const NavLink = ({ href, children, onClick, className = "" }) => (
     <Link 
       href={href} 
