@@ -56,4 +56,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/privacy-policy', function () {
+    return inertia('Information/PrivacyPolicy');
+})->name('privacy.policy');
+
+Route::get('/terms-conditions', function () {
+    return inertia('Information/TermsConditions');
+})->name('terms.conditions');
+
+Route::get('/about-us', function () {
+    return inertia('Information/AboutUs');
+})->name('about.us');
+
 require __DIR__.'/auth.php';
