@@ -97,7 +97,7 @@ Route::get('/track-order', function () {
 })->name('track.order');
 
 Route::get('/cart', function () {
-    return Inertia::render('Cart');
+    return Inertia::render('Shop/Cart');
 })->name('cart');
 
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');

@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import Alert from '../Utils/Alert';
 
 const CartContext = createContext();
 
@@ -7,35 +6,42 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
-    // State for simple toast/alert when adding to cart
+    
+    // State untuk notifikasi popup sederhana
     const [notification, setNotification] = useState(null); 
 
-    // Load cart from localStorage on mount
+    // Ambil data keranjang dari Local Storage saat aplikasi dimuat
     useEffect(() => {
         const storedCart = localStorage.getItem('junelabel_cart');
         if (storedCart) {
             try {
                 setCartItems(JSON.parse(storedCart));
             } catch (error) {
-                console.error("Failed to parse cart from local storage", error);
+                console.error("Gagal mem parsing cart dari local storage", error);
                 localStorage.removeItem('junelabel_cart');
             }
         }
     }, []);
 
-    // Save cart to localStorage whenever it changes
+    // Simpan data ke Local Storage setiap kali cartItems berubah
     useEffect(() => {
         localStorage.setItem('junelabel_cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
+    // Fungsi menambah produk ke keranjang
     const addToCart = (product, quantity = 1) => {
         setCartItems(prevItems => {
+            // Cek apakah produk sudah ada di keranjang
             const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
+            
             if (existingItemIndex > -1) {
+                // Jika sudah ada, update quantity-nya saja
                 const newItems = [...prevItems];
                 newItems[existingItemIndex].quantity += quantity;
                 return newItems;
             } else {
+                // Jika belum ada, tambahkan sebagai item baru
+                // Simpan data penting saja untuk menghemat storage
                 return [...prevItems, { 
                     id: product.id,
                     slug: product.slug,
@@ -66,6 +72,7 @@ export const CartProvider = ({ children }) => {
         setCartItems([]);
     };
 
+    // Menghitung total harga belanjaan di sisi client (frontend display only)
     const getCartTotal = () => {
         return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
@@ -76,7 +83,7 @@ export const CartProvider = ({ children }) => {
 
     const showNotification = (message) => {
         setNotification(message);
-        setTimeout(() => setNotification(null), 3000); // Hide after 3 seconds
+        setTimeout(() => setNotification(null), 3000);
     };
 
     return (
@@ -90,7 +97,7 @@ export const CartProvider = ({ children }) => {
             getCartCount 
         }}>
             {children}
-            {/* Simple Notification Toast */}
+            {/* Tampilkan notifikasi jika ada pesan */}
             {notification && (
                 <div className="fixed bottom-5 right-5 z-[100] bg-[#7C634D] text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-up">
                     {notification}

@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Enums\OrderStatus;
-use App\Enums\PaymentStatus;
+use App\Enum\OrderStatus;
+use App\Enum\PaymentStatus;
 use Illuminate\Support\Facades\Log;
 
 class Order extends Model

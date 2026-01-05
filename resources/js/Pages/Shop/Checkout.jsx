@@ -1,15 +1,12 @@
-import { Head, useForm } from '@inertiajs/react'; // Ensure correct imports
-import Navbar from '@/Components/Layout/Navbar'; // Correct path alias
-import Footer from '@/Components/Layout/Footer'; // Correct path alias
-import { useCart } from '@/Contexts/CartContext'; // Correct path alias
-import { ArrowLeft, CheckCircle } from 'lucide-react'; // Ensure icons are installed
+import { Head, useForm } from '@inertiajs/react';
+import Navbar from '@/Components/Layout/Navbar';
+import Footer from '@/Components/Layout/Footer';
+import { useCart } from '@/Contexts/CartContext';
+import {ArrowLeft, CheckCircle} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function Checkout() {
     const { cartItems, getCartTotal, clearCart } = useCart();
-    // Local calculation for display only.
-    // Ideally user shouldn't be able to edit this easily, but even if they do,
-    // the backend will recalculate based on IDs.
     const [displayTotal, setDisplayTotal] = useState(0);
 
     const { data, setData, post, processing, errors } = useForm({
@@ -21,8 +18,6 @@ export default function Checkout() {
     });
 
     useEffect(() => {
-        // Prepare items for submission (ID and Quantity only)
-        // We do NOT send the price.
         const itemsPayload = cartItems.map(item => ({
             id: item.id,
             quantity: item.quantity
@@ -37,7 +32,6 @@ export default function Checkout() {
         
         post(route('checkout.store'), {
             onSuccess: () => {
-                // Clear local cart after successful order creation
                 clearCart();
             }
         });
@@ -79,7 +73,13 @@ export default function Checkout() {
 
                 <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
                     
-                    {/* Left Column: Input Form */}
+                    {errors.error && (
+                        <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <strong className="font-bold">Error! </strong>
+                            <span className="block sm:inline">{errors.error}</span>
+                        </div>
+                    )}
+
                     <div className="w-full lg:w-3/5">
                         <div className="bg-white p-6 md:p-8 border border-[#7C634D]/10 rounded-sm shadow-sm">
                             <h2 className="text-lg font-bold text-[#7C634D] uppercase tracking-wider mb-6 pb-2 border-b border-[#7C634D]/10">
@@ -134,7 +134,6 @@ export default function Checkout() {
                                     ></textarea>
                                 </div>
 
-                                {/* Mobile Only Submit Button */}
                                 <div className="lg:hidden mt-8">
                                     <button 
                                         type="submit" 
@@ -148,7 +147,6 @@ export default function Checkout() {
                         </div>
                     </div>
 
-                    {/* Right Column: Order Summary */}
                     <div className="w-full lg:w-2/5">
                         <div className="bg-white p-6 md:p-8 border border-[#7C634D]/10 rounded-sm shadow-sm sticky top-24">
                             <h2 className="text-lg font-bold text-[#7C634D] uppercase tracking-wider mb-6 pb-2 border-b border-[#7C634D]/10">

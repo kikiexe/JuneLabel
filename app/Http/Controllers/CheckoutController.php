@@ -9,17 +9,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use App\Enum\PaymentStatus;
+use App\Enum\OrderStatus;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Checkout');
+        return Inertia::render('Shop/Checkout');
     }
 
     public function store(Request $request)
     {
-        // 1. Validate User Input
+        // 1. Validasi Input dari User
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
@@ -31,9 +33,11 @@ class CheckoutController extends Controller
         ]);
 
         try {
+            // Gunakan Transaction agar data konsisten (Rollback jika error)
             return DB::transaction(function () use ($validated, $request) {
-                // 2. Security: Recalculate Totals from Database
-                // We do NOT trust any price sent from the frontend.
+                
+                // 2. Keamanan: Ambil Harga dari Database (Server Side)
+                // Kita TIDAK BOLEH percaya harga yang dikirim dari React/Frontend
                 $itemIds = collect($validated['items'])->pluck('id');
                 $products = Product::whereIn('id', $itemIds)->get()->keyBy('id');
 
@@ -43,52 +47,47 @@ class CheckoutController extends Controller
                 foreach ($validated['items'] as $item) {
                     $product = $products[$item['id']];
                     
-                    // Optional: Check stock availability here
-                    // if ($product->stock < $item['quantity']) { ... }
-
-                    $price = $product->price; // Security: Taking price from DB
+                    // Ambil harga asli dari database
+                    $price = $product->price;
                     $lineTotal = $price * $item['quantity'];
                     
                     $subtotal += $lineTotal;
 
+                    // Siapkan data item untuk disimpan snapshot harganya
                     $orderItemsData[] = [
                         'product_id' => $product->id,
-                        'product_name' => $product->name, // Store snapshot of name
-                        'price' => $price, // Store snapshot of price at time of purchase
+                        'product_name' => $product->name,
+                        'unit_price' => $price, // Harga saat transaksi terjadi
                         'quantity' => $item['quantity'],
                         'subtotal' => $lineTotal,
                     ];
                 }
 
-                $shippingCost = 0; // Logic for shipping cost calculation could go here
+                $shippingCost = 0; // Logika ongkir bisa ditambahkan di sini
                 $totalPrice = $subtotal + $shippingCost;
 
-                // 3. Create Order
-                // Generate a unique order code
+                // 3. Buat Data Order Utama
                 $orderCode = 'ORD-' . strtoupper(Str::random(4)) . '-' . now()->timestamp;
 
                 $order = Order::create([
-                    'user_id' => auth()->id(), // Nullable if guest checkout
+                    'user_id' => auth()->id(), // null jika user belum login (Guest)
                     'order_code' => $orderCode,
                     'subtotal' => $subtotal,
                     'shipping_cost' => $shippingCost,
                     'total_price' => $totalPrice,
-                    'payment_status' => 'pending',
+                    'payment_status' => PaymentStatus::Pending,
                     'customer_name' => $validated['customer_name'],
                     'customer_phone' => $validated['customer_phone'],
                     'shipping_address' => $validated['shipping_address'],
                     'notes' => $validated['notes'] ?? null,
                 ]);
 
-                // 4. Create Order Items
+                // 4. Masukkan Item-item ke dalam Order tersebut
                 foreach ($orderItemsData as $data) {
-                    $order->items()->create($data);
+                    $order->orderItems()->create($data);
                 }
 
-                // 5. Integration with Payment Gateway (Midtrans) would happen here
-                // For now, we'll just redirect to a success page or back with success message.
-
-                // Ideally, we return a redirect URL to the payment page or the order details page.
+                // Redirect ke halaman sukses
                 return redirect()->route('order.complete', ['order' => $order->order_code])
                     ->with('success', 'Order created successfully. Please proceed to payment.');
             });
@@ -100,14 +99,16 @@ class CheckoutController extends Controller
 
     public function complete($orderCode)
     {
-        $order = Order::with('items')->where('order_code', $orderCode)->firstOrFail();
+        // 5. Tampilkan Halaman Sukses
+        // Pastikan load relasi orderItems untuk ditampilkan
+        $order = Order::with('orderItems')->where('order_code', $orderCode)->firstOrFail();
         
-        // Security check: If user is logged in, make sure it's their order
+        // Cek Keamanan: Pastikan user yang login hanya bisa lihat order miliknya sendiri
         if (auth()->check() && $order->user_id !== auth()->id()) {
             abort(403);
         }
 
-        return Inertia::render('OrderComplete', [
+        return Inertia::render('Shop/OrderComplete', [
             'order' => $order
         ]);
     }
