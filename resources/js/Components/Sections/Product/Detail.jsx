@@ -3,11 +3,14 @@ import { useState } from 'react';
 import { Minus, Plus, Facebook, Twitter, MessageCircle } from 'lucide-react';
 import Alert from '../../../Utils/Alert';
 import RelatedProducts from '../Product/Related';
+import { useCart } from '../../../Contexts/CartContext';
+import { router } from '@inertiajs/react';
 
 export default function DetailSection({ product, auth }) {
     const [quantity, setQuantity] = useState(1);
     const [alertOpen, setAlertOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const { addToCart } = useCart();
 
     const allImages = [
         product.image, 
@@ -161,7 +164,7 @@ export default function DetailSection({ product, auth }) {
 
                             {/* Buttons */}
                             <button 
-                                onClick={handleDevFeature}
+                                onClick={() => addToCart(product, quantity)}
                                 className="group relative w-full py-4 border border-[#7C634D] text-[#7C634D] font-bold text-xs tracking-[0.2em] uppercase overflow-hidden"
                             >
                                 <span className="absolute inset-0 w-full h-full bg-[#7C634D] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
@@ -170,7 +173,10 @@ export default function DetailSection({ product, auth }) {
                                 </span>
                             </button>
                             <button 
-                                onClick={handleDevFeature}
+                                onClick={() => {
+                                    addToCart(product, quantity);
+                                    router.visit('/cart');
+                                }}
                                 className="group relative w-full py-4 bg-[#7C634D] border border-[#7C634D] text-white font-bold text-xs tracking-[0.2em] uppercase overflow-hidden shadow-md"
                             >
                                 <span className="absolute inset-0 w-full h-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>

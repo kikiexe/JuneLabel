@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from '@inertiajs/react';
 import { Menu, Search, ShoppingBag, User, X, Facebook, Mail, Instagram, ChevronDown, ChevronUp } from 'lucide-react';
 import Alert from "../../Utils/Alert";
+import { useCart } from "../../Contexts/CartContext";
 
 export default function Navbar() {
+  const { getCartCount } = useCart();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -141,8 +143,13 @@ export default function Navbar() {
                 <Search size={20} color="#7C634D" strokeWidth={2} />
               </button>
 
-              <Link href="/cart" onClick={handleDevFeature} className="hover:opacity-70 transition-opacity">
+              <Link href="/cart" className="hover:opacity-70 transition-opacity relative">
                 <ShoppingBag size={20} color="#7C634D" strokeWidth={2} />
+                {getCartCount() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#7C634D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {getCartCount()}
+                  </span>
+                )}
               </Link>
 
               <Link href={route('login')} onClick={handleDevFeature} className="hover:opacity-70 transition-opacity hidden xl:block">

@@ -96,4 +96,12 @@ Route::get('/track-order', function () {
     return inertia('Information/TrackOrder');
 })->name('track.order');
 
+Route::get('/cart', function () {
+    return Inertia::render('Cart');
+})->name('cart');
+
+Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/order-complete/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');
+
 require __DIR__.'/auth.php';
