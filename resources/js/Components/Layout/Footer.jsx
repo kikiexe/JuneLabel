@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from '@inertiajs/react'; 
 import { Facebook, Instagram, Mail, Twitter } from 'lucide-react';
-
 import WhatsAppButton from '../../Utils/WhatsAppButton';
 import Alert from '../../Utils/Alert';
 
@@ -29,31 +28,17 @@ export default function Footer() {
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-12">
 					
 					<div className="lg:col-span-1">
-						<h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">NEWSLETTER</h3>
-						<p className="text-xs leading-relaxed mb-6 text-[#525252]/80">
-							Subscribe to receive updates, access to exclusive deals, and more.
-						</p>
-						<form onSubmit={handleSubscribe} className="space-y-4">
-							<input
-								type="email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								placeholder=" Enter your email address"
-								required
-								className="w-full px-0 py-2 text-xs border-b border-[#525252] bg-transparent focus:outline-none focus:border-[#525252] transition-colors placeholder-[#525252]/50"
-							/>
-							<button
-								type="submit"
-								className="group relative px-6 py-2 text-[10px] font-bold uppercase tracking-[0.15em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300 shadow-sm text-white"
-								style={{ borderRadius: '0px' }}
-							>
-								<span className="absolute inset-0 w-full h-full bg-[#FFFFFF] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
-								<span className="relative z-10 transition-colors duration-500 group-hover:text-[#7C634D]">
-									SUBSCRIBE
-								</span>
-							</button>
-						</form>
-					</div>
+                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">CUSTOMER CARE</h3>
+                        <ul className="space-y-2 text-xs text-[#525252]/80">
+                            <li><Link href="/payment-information" className="hover:underline">Payment Information</Link></li>
+                            <li><Link href="/how-to-order" className="hover:underline">How to Order</Link></li>
+                            <li><Link href="/how-to-pay" className="hover:underline">How to Pay</Link></li>
+                            <li><Link href="/shipping-policy" className="hover:underline">Shipping Policy</Link></li>
+                            <li><Link href="/terms-conditions" className="hover:underline">Terms of Service</Link></li>
+                            <li><Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
+                            <li><Link href="/track-order" className="hover:underline">Track Order</Link></li>
+                        </ul>
+                    </div>
 
                     <div className="lg:col-span-1">
                         <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">JUNE LABEL</h3>
@@ -100,23 +85,38 @@ export default function Footer() {
                     <div className="lg:col-span-1">
                         <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">ABOUT US</h3>
                         <ul className="space-y-2 text-xs text-[#525252]/80">
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Contact Us</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Our Store</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Stories</Link></li>
+                            <li><Link href="/contact-us" className="hover:underline">Contact Us</Link></li>
+                            <li><Link href="/our-store" className="hover:underline">Our Store</Link></li>
+                            <li><Link href="/about-us" className="hover:underline">Stories</Link></li>
                         </ul>
                     </div>
 
                     <div className="lg:col-span-1">
-                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">CUSTOMER CARE</h3>
-                        <ul className="space-y-2 text-xs text-[#525252]/80">
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Payment Information</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">How to Order</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">How to Pay</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Shipping Policy</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Terms of Service</Link></li>
-                            <li><Link href="#" onClick={handleDevFeature} className="hover:underline">Track Order</Link></li>
-                        </ul>
-                    </div>
+						<h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">NEWSLETTER</h3>
+						<p className="text-xs leading-relaxed mb-6 text-[#525252]/80">
+							Subscribe to receive updates, access to exclusive deals, and more.
+						</p>
+						<form onSubmit={handleSubscribe} className="space-y-4">
+							<input
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								placeholder=" Enter your email address"
+								required
+								className="w-full px-0 py-2 text-xs border-b border-[#525252] bg-transparent focus:outline-none focus:border-[#525252] transition-colors placeholder-[#525252]/50"
+							/>
+							<button
+								type="submit"
+								className="group relative px-6 py-2 text-[10px] font-bold uppercase tracking-[0.15em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300 shadow-sm text-white"
+								style={{ borderRadius: '0px' }}
+							>
+								<span className="absolute inset-0 w-full h-full bg-[#FFFFFF] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
+								<span className="relative z-10 transition-colors duration-500 group-hover:text-[#7C634D]">
+									SUBSCRIBE
+								</span>
+							</button>
+						</form>
+					</div>
 				</div>
 
 				<div className="pt-8 text-center">

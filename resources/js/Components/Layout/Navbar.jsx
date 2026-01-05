@@ -138,15 +138,15 @@ export default function Navbar() {
 
             <div className="flex items-center gap-5 xl:gap-8 flex-1 justify-end">
               <button onClick={() => setSearchOpen(!searchOpen)} className="hover:opacity-70 transition-opacity">
-                <Search size={22} color="#7C634D" strokeWidth={2} />
+                <Search size={20} color="#7C634D" strokeWidth={2} />
               </button>
 
               <Link href="/cart" onClick={handleDevFeature} className="hover:opacity-70 transition-opacity">
-                <ShoppingBag size={22} color="#7C634D" strokeWidth={2} />
+                <ShoppingBag size={20} color="#7C634D" strokeWidth={2} />
               </Link>
 
               <Link href={route('login')} onClick={handleDevFeature} className="hover:opacity-70 transition-opacity hidden xl:block">
-                <User size={22} color="#7C634D" strokeWidth={2} />
+                <User size={20} color="#7C634D" strokeWidth={2} />
               </Link>
             </div>
         </div>
@@ -182,7 +182,7 @@ export default function Navbar() {
                 
                 <div className="px-6 py-4 flex items-center justify-between border-b border-[#7C634D]/10">
                     <button onClick={() => setMobileMenuOpen(false)} className="hover:opacity-70">
-                        <X size={24} color="#7C634D" strokeWidth={1.5} />
+                        <X size={20} color="#7C634D" strokeWidth={1.5} />
                     </button>
 
                     <Link href="/" className="block" onClick={() => setMobileMenuOpen(false)}>

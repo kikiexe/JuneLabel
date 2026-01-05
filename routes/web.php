@@ -68,4 +68,32 @@ Route::get('/about-us', function () {
     return inertia('Information/AboutUs');
 })->name('about.us');
 
+Route::get('/contact-us', function () {
+    return inertia('Information/ContactUs');
+})->name('contact.us');
+
+Route::get('/our-store', function () {
+    return inertia('Information/OurStore');
+})->name('our.store');
+
+Route::get('/payment-information', function () {
+    return inertia('Information/PaymentInformation');
+})->name('payment.info');
+
+Route::get('/how-to-order', function () {
+    return inertia('Information/HowToOrder');
+})->name('how.to.order');
+
+Route::get('/how-to-pay', function () {
+    return inertia('Information/HowToPay');
+})->name('how.to.pay');
+
+Route::get('/shipping-policy', function () {
+    return inertia('Information/ShippingPolicy');
+})->name('shipping.policy');
+
+Route::get('/track-order', function () {
+    return inertia('Information/TrackOrder');
+})->name('track.order');
+
 require __DIR__.'/auth.php';
