@@ -4,7 +4,7 @@
 
 @layer base {
     ::selection {
-        background-color: #7c634d;
+        background-color: #ffffff;
         color: #fff6ec;
     }
 }

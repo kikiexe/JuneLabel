@@ -15,6 +15,7 @@ export default {
             fontFamily: {
             'noto-serif-hk': ['"Noto Serif HK"', 'serif'],
             'montserrat': ['"Montserrat"', 'serif'],
+            'inter': ['"Inter"', 'sans'],
           },
         },
       },
