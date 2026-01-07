@@ -21,7 +21,7 @@ export default function Footer() {
 	};
 
 	return (
-		<footer style={{ backgroundColor: "#d9d9d9", color: "#525252" }} className="py-12 px-6 md:px-10 lg:px-16 font-inter text-sm relative">
+		<footer style={{ backgroundColor: "#ffffff", color: "#525252" }} className="py-12 px-6 md:px-10 lg:px-16 font-inter text-sm relative">
             <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
             <WhatsAppButton />
 			<div className="w-full max-w-[1920px] mx-auto">
@@ -107,11 +107,11 @@ export default function Footer() {
 							/>
 							<button
 								type="submit"
-								className="group relative px-6 py-2 text-[10px] font-bold uppercase tracking-[0.15em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300 shadow-sm text-white"
+								className="group relative px-6 py-2 text-[10px] font-bold uppercase tracking-[0.15em] border border-[#525252] bg-[#525252] overflow-hidden transition-all duration-300 shadow-sm text-white"
 								style={{ borderRadius: '0px' }}
 							>
 								<span className="absolute inset-0 w-full h-full bg-[#FFFFFF] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
-								<span className="relative z-10 transition-colors duration-500 group-hover:text-[#7C634D]">
+								<span className="relative z-10 transition-colors duration-500 group-hover:text-[#525252]">
 									SUBSCRIBE
 								</span>
 							</button>
