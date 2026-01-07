@@ -100,6 +100,8 @@ Route::get('/cart', function () {
     return Inertia::render('Shop/Cart');
 })->name('cart');
 
+Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
+
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/order-complete/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');

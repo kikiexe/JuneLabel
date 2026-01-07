@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { Menu, Search, ShoppingBag, User, X, Facebook, Mail, Instagram, ChevronDown, ChevronUp } from 'lucide-react';
 import Alert from "../../Utils/Alert";
 import { useCart } from "../../Contexts/CartContext";
@@ -40,13 +40,12 @@ export default function Navbar() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      console.log(`Mencari: ${searchQuery}`);
+      router.visit(route('shop.index', { search: searchQuery }));
     }
   };
 
   const handleDevFeature = (e) => {
-    e.preventDefault();
-    setAlertOpen(true);
+    // Fungsi ini tidak lagi digunakan untuk blokir link, tapi bisa untuk debug/tracking
     setMobileMenuOpen(false);
   };
 
@@ -87,31 +86,30 @@ export default function Navbar() {
       >
         <div className="w-full flex items-center justify-between relative">
             <div className="hidden xl:flex items-center gap-10 flex-1">
-              <NavLink href="/new-arrival" onClick={handleDevFeature}>NEW ARRIVAL</NavLink>
-              <NavLink href="/best-seller" onClick={handleDevFeature}>BEST SELLER</NavLink>
+              <NavLink href={route('shop.index', { sort: 'latest' })}>NEW ARRIVAL</NavLink>
+              <NavLink href={route('shop.index', { sort: 'price_desc' })}>BEST SELLER</NavLink>
               
               <div className="group relative">
                 <div className="py-4">
-                    <NavLink href="/collections" onClick={handleDevFeature} className="group-hover:text-[#7C634D]">COLLECTIONS</NavLink>
+                    <NavLink href={route('shop.index')} className="group-hover:text-[#7C634D]">COLLECTIONS</NavLink>
                 </div>
                 
                 <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
                     <div className="flex flex-col py-4 px-6 space-y-4">
                          {[
-                            'Pashmina Tencel',
-                            'Pashmina Viscose Rayon',
-                            'Paris Japan Ori',
-                            'Paris Jadul Premium',
-                            'Pashmina Inner Tencel',
-                            'Hijab Printing'
+                            { name: 'Pashmina Tencel', slug: 'pashmina-tencel' },
+                            { name: 'Pashmina Viscose Rayon', slug: 'pashmina-viscose-rayon' },
+                            { name: 'Paris Japan Ori', slug: 'paris-japan-ori' },
+                            { name: 'Paris Jadul Premium', slug: 'paris-jadul-premium' },
+                            { name: 'Pashmina Inner Tencel', slug: 'pashmina-inner-tencel' },
+                            { name: 'Hijab Printing', slug: 'hijab-printing' }
                         ].map((item, index) => (
                             <Link 
                                 key={index} 
-                                href="#"
-                                onClick={handleDevFeature}
+                                href={route('shop.index', { category: item.slug })}
                                 className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
                             >
-                                {item}
+                                {item.name}
                             </Link>
                         ))}
                     </div>
@@ -199,16 +197,14 @@ export default function Navbar() {
 
                 <div className="flex-1 overflow-y-auto py-4">
                     <div className="flex flex-col">
-                        <Link 
-                            href="/new-arrival" 
-                            onClick={handleDevFeature}
+                         <Link 
+                            href={route('shop.index', { sort: 'latest' })}
                             className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                         >
                             New Arrival
                         </Link>
                          <Link 
-                            href="/best-seller" 
-                            onClick={handleDevFeature}
+                            href={route('shop.index', { sort: 'price_desc' })}
                             className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                         >
                             Best Seller
@@ -225,20 +221,19 @@ export default function Navbar() {
                         <div className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#F8F1EB] ${collectionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
                             <div className="flex flex-col py-2">
                                 {[
-                                    'Pashmina Tencel',
-                                    'Pashmina Viscose Rayon',
-                                    'Paris Japan Ori',
-                                    'Paris Jadul Premium',
-                                    'Pashmina Inner Tencel',
-                                    'Hijab Printing'
+                                    { name: 'Pashmina Tencel', slug: 'pashmina-tencel' },
+                                    { name: 'Pashmina Viscose Rayon', slug: 'pashmina-viscose-rayon' },
+                                    { name: 'Paris Japan Ori', slug: 'paris-japan-ori' },
+                                    { name: 'Paris Jadul Premium', slug: 'paris-jadul-premium' },
+                                    { name: 'Pashmina Inner Tencel', slug: 'pashmina-inner-tencel' },
+                                    { name: 'Hijab Printing', slug: 'hijab-printing' }
                                 ].map((item, index) => (
                                     <Link 
                                         key={index} 
-                                        href="#"
-                                        onClick={handleDevFeature}
+                                        href={route('shop.index', { category: item.slug })}
                                         className="pl-10 pr-6 py-3 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
                                     >
-                                        {item}
+                                        {item.name}
                                     </Link>
                                 ))}
                             </div>
