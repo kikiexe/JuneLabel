@@ -21,15 +21,15 @@ export default function Footer() {
 	};
 
 	return (
-		<footer style={{ backgroundColor: "#d9d9d9", color: "#525252" }} className="py-12 px-6 md:px-10 lg:px-16 font-inter text-sm relative">
+		<footer style={{ backgroundColor: "#ffffff", color: "#020002" }} className="py-12 px-6 md:px-10 lg:px-16 font-inter text-sm relative">
             <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
             <WhatsAppButton />
 			<div className="w-full max-w-[1920px] mx-auto">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-12">
 					
 					<div className="lg:col-span-1">
-                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">CUSTOMER CARE</h3>
-                        <ul className="space-y-2 text-xs text-[#525252]/80">
+                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#020002] uppercase">CUSTOMER CARE</h3>
+                        <ul className="space-y-2 text-xs text-[#020002]/80">
                             <li><Link href="/payment-information" className="hover:underline">Payment Information</Link></li>
                             <li><Link href="/how-to-order" className="hover:underline">How to Order</Link></li>
                             <li><Link href="/how-to-pay" className="hover:underline">How to Pay</Link></li>
@@ -41,18 +41,18 @@ export default function Footer() {
                     </div>
 
                     <div className="lg:col-span-1">
-                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">JUNE LABEL</h3>
-                        <p className="text-xs leading-relaxed mb-6 text-[#525252]/80">
+                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#020002] uppercase">JUNE LABEL</h3>
+                        <p className="text-xs leading-relaxed mb-6 text-[#020002]/80">
                             Founded in 2025, June Label comes with variety of cute and sweet colors as characteristic of Muslimah who always spread kindness. We inspire to present comfortable daily hijab for your everyday wear.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" onClick={handleDevFeature} className="hover:opacity-70 transition-opacity text-[#525252]">
+                            <a href="#" onClick={handleDevFeature} className="hover:opacity-70 transition-opacity text-[#020002]">
                                 <Facebook size={16} strokeWidth={1.5} />
                             </a>
                              <a 	href="https://www.tiktok.com/@junelabel.co" 
 									target="_blank"
 									rel="noopener noreferrer" 
-									className="hover:opacity-70 transition-opacity text-[#525252]">
+									className="hover:opacity-70 transition-opacity text-[#020002]">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path>
                                 </svg>
@@ -60,18 +60,18 @@ export default function Footer() {
                             <a	href="https://www.instagram.com/junelabel.co/" 
                                 target="_blank"
                                 rel="noopener noreferrer" 
-                                className="hover:opacity-70 transition-opacity text-[#525252]">
+                                className="hover:opacity-70 transition-opacity text-[#020002]">
                                 <Instagram size={16} strokeWidth={1.5} />
                             </a>
-                            <a href="mailto:junelabelco@gmail.com" className="hover:opacity-70 transition-opacity text-[#525252]">
+                            <a href="mailto:junelabelco@gmail.com" className="hover:opacity-70 transition-opacity text-[#020002]">
                                 <Mail size={16} strokeWidth={1.5} />
                             </a>
                         </div>
                     </div>
 
                      <div className="lg:col-span-1">
-                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">CUSTOMER SERVICES</h3>
-                        <div className="space-y-3 text-xs text-[#525252]/80">
+                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#020002] uppercase">CUSTOMER SERVICES</h3>
+                        <div className="space-y-3 text-xs text-[#020002]/80">
                              <p>
                                 Chat with Us : <a href="https://wa.me/6282282577216" target="_blank" rel="noopener noreferrer" className="hover:underline transition-all">+62 822-8257-7216</a>
                              </p>
@@ -83,8 +83,8 @@ export default function Footer() {
                     </div>
 
                     <div className="lg:col-span-1">
-                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">ABOUT US</h3>
-                        <ul className="space-y-2 text-xs text-[#525252]/80">
+                        <h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#020002] uppercase">ABOUT US</h3>
+                        <ul className="space-y-2 text-xs text-[#020002]/80">
                             <li><Link href="/contact-us" className="hover:underline">Contact Us</Link></li>
                             <li><Link href="/our-store" className="hover:underline">Our Store</Link></li>
                             <li><Link href="/about-us" className="hover:underline">Stories</Link></li>
@@ -92,8 +92,8 @@ export default function Footer() {
                     </div>
 
                     <div className="lg:col-span-1">
-						<h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#525252] uppercase">NEWSLETTER</h3>
-						<p className="text-xs leading-relaxed mb-6 text-[#525252]/80">
+						<h3 className="text-xs font-bold tracking-[0.15em] mb-4 text-[#020002] uppercase">NEWSLETTER</h3>
+						<p className="text-xs leading-relaxed mb-6 text-[#020002]/80">
 							Subscribe to receive updates, access to exclusive deals, and more.
 						</p>
 						<form onSubmit={handleSubscribe} className="space-y-4">
@@ -103,7 +103,7 @@ export default function Footer() {
 								onChange={(e) => setEmail(e.target.value)}
 								placeholder=" Enter your email address"
 								required
-								className="w-full px-0 py-2 text-xs border-b border-[#525252] bg-transparent focus:outline-none focus:border-[#525252] transition-colors placeholder-[#525252]/50"
+								className="w-full px-0 py-2 text-xs border-b border-[#020002] bg-transparent focus:outline-none focus:border-[#020002] transition-colors placeholder-[#020002]/50"
 							/>
 							<button
 								type="submit"
@@ -136,7 +136,7 @@ export default function Footer() {
 							</div>
 						))}
 					</div>
-					<p className="text-[10px] md:text-xs pt-2 text-[#525252]/60">
+					<p className="text-[10px] md:text-xs pt-2 text-[#020002]/60">
 						&copy; {currentYear} <span className="underline">June Label</span> - All Rights Reserved. Developed by <a href="https://www.instagram.com/munkstudio.id/" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-70 transition-opacity">munkstudio.id</a>
 					</p>
 				</div>
