@@ -60,10 +60,11 @@ export default function Cart() {
                                 <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-4 py-4 border-b border-[#7C634D]/10 items-center">
                                     {/* Product Info */}
                                     <div className="col-span-1 md:col-span-6 flex gap-4">
-                                        <div className="w-20 h-24 bg-[#f9f9f9] flex-shrink-0">
+                                        <div className="w-20 h-24 bg-gray-200 flex-shrink-0">
                                             <img 
                                                 src={`/storage/${item.image}`} 
                                                 alt={item.name} 
+                                                loading="lazy"
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
@@ -73,7 +74,8 @@ export default function Cart() {
                                             </Link>
                                             <button 
                                                 onClick={() => removeFromCart(item.id)}
-                                                className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 mt-2 w-fit transition-colors"
+                                                className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 mt-2 w-fit transition-colors focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded px-1"
+                                                aria-label="Remove item from cart"
                                             >
                                                 <Trash2 size={12} /> Remove
                                             </button>
@@ -91,15 +93,17 @@ export default function Cart() {
                                         <span className="md:hidden text-xs text-gray-500 mr-2">Qty:</span>
                                         <button 
                                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                            className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors disabled:opacity-30"
+                                            className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-offset-1"
                                             disabled={item.quantity <= 1}
+                                            aria-label="Decrease quantity"
                                         >
                                             <Minus size={14} color="#7C634D" />
                                         </button>
                                         <span className="w-8 text-center font-medium text-[#7C634D]">{item.quantity}</span>
                                         <button 
                                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                            className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors"
+                                            className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-offset-1"
+                                            aria-label="Increase quantity"
                                         >
                                             <Plus size={14} color="#7C634D" />
                                         </button>

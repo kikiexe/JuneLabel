@@ -93,7 +93,17 @@ class CheckoutController extends Controller
             });
 
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Failed to create order: ' . $e->getMessage()]);
+            // Log error untuk debugging
+            \Log::error('Checkout Error: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'items' => $validated['items'] ?? [],
+                'exception' => $e
+            ]);
+            
+            // Return custom error page dengan Inertia
+            return inertia('Shop/OrderError', [
+                'error' => 'Unable to process your order. Please check your information and try again.'
+            ]);
         }
     }
 

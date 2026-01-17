@@ -4,6 +4,7 @@ import Footer from '@/Components/Layout/Footer';
 import { useCart } from '@/Contexts/CartContext';
 import {ArrowLeft, CheckCircle} from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { sanitizeString, validatePhone, validateEmail } from '@/Utils/validation';
 
 export default function Checkout() {
     const { cartItems, getCartTotal, clearCart } = useCart();
@@ -26,6 +27,27 @@ export default function Checkout() {
         setData('items', itemsPayload);
         setDisplayTotal(getCartTotal());
     }, [cartItems]);
+
+    // Sanitization handlers
+    const handleNameChange = (e) => {
+        const sanitized = sanitizeString(e.target.value);
+        setData('customer_name', sanitized);
+    };
+
+    const handlePhoneChange = (e) => {
+        const sanitized = sanitizeString(e.target.value);
+        setData('customer_phone', sanitized);
+    };
+
+    const handleAddressChange = (e) => {
+        const sanitized = sanitizeString(e.target.value);
+        setData('shipping_address', sanitized);
+    };
+
+    const handleNotesChange = (e) => {
+        const sanitized = sanitizeString(e.target.value);
+        setData('notes', sanitized);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -88,37 +110,49 @@ export default function Checkout() {
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Full Name</label>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                                        Full Name <span className="text-red-500">*</span>
+                                    </label>
                                     <input 
                                         type="text" 
                                         value={data.customer_name}
-                                        onChange={e => setData('customer_name', e.target.value)}
+                                        onChange={handleNameChange}
                                         className="w-full bg-[#f9f9f9] border border-gray-200 focus:border-[#7C634D] focus:ring-0 text-[#7C634D] px-4 py-3 text-sm transition-colors"
                                         placeholder="Enter your full name"
+                                        required
+                                        aria-required="true"
                                     />
                                     {errors.customer_name && <p className="text-red-500 text-xs mt-1">{errors.customer_name}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Phone Number / WhatsApp</label>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                                        Phone Number / WhatsApp <span className="text-red-500">*</span>
+                                    </label>
                                     <input 
                                         type="text" 
                                         value={data.customer_phone}
-                                        onChange={e => setData('customer_phone', e.target.value)}
+                                        onChange={handlePhoneChange}
                                         className="w-full bg-[#f9f9f9] border border-gray-200 focus:border-[#7C634D] focus:ring-0 text-[#7C634D] px-4 py-3 text-sm transition-colors"
                                         placeholder="0812..."
+                                        required
+                                        aria-required="true"
                                     />
                                     {errors.customer_phone && <p className="text-red-500 text-xs mt-1">{errors.customer_phone}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Shipping Address</label>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                                        Shipping Address <span className="text-red-500">*</span>
+                                    </label>
                                     <textarea 
                                         rows="4"
                                         value={data.shipping_address}
-                                        onChange={e => setData('shipping_address', e.target.value)}
+                                        onChange={handleAddressChange}
                                         className="w-full bg-[#f9f9f9] border border-gray-200 focus:border-[#7C634D] focus:ring-0 text-[#7C634D] px-4 py-3 text-sm transition-colors resize-none"
                                         placeholder="Full address (Street, City, District, Postal Code)"
+                                        required
+                                        aria-required="true"
                                     ></textarea>
                                     {errors.shipping_address && <p className="text-red-500 text-xs mt-1">{errors.shipping_address}</p>}
                                 </div>
@@ -128,7 +162,7 @@ export default function Checkout() {
                                     <textarea 
                                         rows="2"
                                         value={data.notes}
-                                        onChange={e => setData('notes', e.target.value)}
+                                        onChange={handleNotesChange}
                                         className="w-full bg-[#f9f9f9] border border-gray-200 focus:border-[#7C634D] focus:ring-0 text-[#7C634D] px-4 py-3 text-sm transition-colors resize-none"
                                         placeholder="Special instructions for delivery"
                                     ></textarea>

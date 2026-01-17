@@ -1,12 +1,12 @@
 import React from 'react';
+import { CONTACT_INFO, DEFAULT_WHATSAPP_MESSAGE } from '../Constants/contact';
 
 export default function WhatsAppButton() {
-  const phoneNumber = "6282282577216";
-  const message = "Halo June Label, saya ingin bertanya mengenai produk anda.";
+  const message = DEFAULT_WHATSAPP_MESSAGE;
 
   return (
     <a
-      href={`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`}
+      href={`https://wa.me/${CONTACT_INFO.whatsapp}?text=${encodeURIComponent(message)}`}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[9999] flex items-center justify-center w-10 h-10 md:w-14 md:h-14 bg-[#7C634D] rounded-full shadow-lg hover:bg-[#7C634D] transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#7C634D] focus:ring-offset-2"

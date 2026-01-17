@@ -1,10 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;600;700&family=Noto+Serif+HK:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --color-primary: #7c634d;
+        --color-light: #fff6ec;
+        --color-dark: #020002;
+        --color-gray: #525252;
+        --color-pink: #c45e5e;
+        --color-cream: #f8f1eb;
+
+        --container-padding: 1rem;
+        --container-padding-md: 2rem;
+        --container-padding-lg: 4rem;
+    }
+
+    * {
+        @apply font-inter;
+    }
+
     ::selection {
-        background-color: #7c634d;
-        color: #fff6ec;
+        background-color: var(--color-primary);
+        color: var(--color-light);
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--color-light);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-primary);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-dark);
+    }
+}
+
+@layer utilities {
+    /* Toast slide-up animation */
+    @keyframes slide-up {
+        from {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .animate-slide-up {
+        animation: slide-up 0.3s ease-out;
+    }
+    
+    /* Badge bounce animation */
+    @keyframes badge-bounce {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+    }
+    
+    .animate-badge-bounce {
+        animation: badge-bounce 0.5s ease-in-out;
+    }
+    
+    /* Skeleton pulse animation */
+    @keyframes skeleton-pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+    
+    .animate-pulse {
+        animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    /* Screen reader only - visually hidden but accessible */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
     }
 }

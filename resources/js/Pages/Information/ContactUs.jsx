@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { CONTACT_INFO } from '@/Constants/contact';
 
 export default function ContactUs() {
   return (
@@ -30,7 +31,7 @@ export default function ContactUs() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#7C634D] mb-1">Email</h3>
-                    <p className="text-[#7C634D]/80">junelabelco@gmail.com</p>
+                    <p className="text-[#7C634D]/80">{CONTACT_INFO.email}</p>
                     <p className="text-[#7C634D]/80 text-sm mt-1">We'll respond within 24 hours</p>
                   </div>
                 </div>
@@ -41,10 +42,10 @@ export default function ContactUs() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#7C634D] mb-1">WhatsApp</h3>
-                     <a href="https://wa.me/6282282577216" target="_blank" rel="noopener noreferrer" className="text-[#7C634D]/80 hover:underline">
-                      +62 822-8257-7216
+                     <a href={`https://wa.me/${CONTACT_INFO.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-[#7C634D]/80 hover:underline">
+                      {CONTACT_INFO.phone}
                     </a>
-                    <p className="text-[#7C634D]/80 text-sm mt-1">Mon - Sun: 8.30 AM - 9.00 PM</p>
+                    <p className="text-[#7C634D]/80 text-sm mt-1">{CONTACT_INFO.workingHours}</p>
                   </div>
                 </div>
 

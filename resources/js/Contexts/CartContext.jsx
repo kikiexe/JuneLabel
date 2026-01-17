@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { STORAGE_KEYS, storage } from '../Constants/storage';
 
 const CartContext = createContext();
 
@@ -12,20 +13,13 @@ export const CartProvider = ({ children }) => {
 
     // Ambil data keranjang dari Local Storage saat aplikasi dimuat
     useEffect(() => {
-        const storedCart = localStorage.getItem('junelabel_cart');
-        if (storedCart) {
-            try {
-                setCartItems(JSON.parse(storedCart));
-            } catch (error) {
-                console.error("Gagal mem parsing cart dari local storage", error);
-                localStorage.removeItem('junelabel_cart');
-            }
-        }
+        const storedCart = storage.get(STORAGE_KEYS.CART, []);
+        setCartItems(storedCart);
     }, []);
 
     // Simpan data ke Local Storage setiap kali cartItems berubah
     useEffect(() => {
-        localStorage.setItem('junelabel_cart', JSON.stringify(cartItems));
+        storage.set(STORAGE_KEYS.CART, cartItems);
     }, [cartItems]);
 
     // Fungsi menambah produk ke keranjang

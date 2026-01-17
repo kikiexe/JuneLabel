@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CONTACT_INFO } from '@/Constants/contact';
 
 export default function OrderComplete({ order }) {
     const formatPrice = (price) => {
@@ -56,7 +57,7 @@ export default function OrderComplete({ order }) {
 
                     <div className="flex flex-col gap-3">
                          <a 
-                            href={`https://wa.me/6281234567890?text=Halo%20June%20Label,%20saya%20sudah%20melakukan%20pemesanan%20dengan%20kode%20${order.order_code}.%20Mohon%20info%20pembayarannya.`}
+                            href={`https://wa.me/${CONTACT_INFO.whatsapp}?text=Halo%20June%20Label,%20saya%20sudah%20melakukan%20pemesanan%20dengan%20kode%20${order.order_code}.%20Mohon%20info%20pembayarannya.`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full bg-[#25D366] text-white py-3 font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2"

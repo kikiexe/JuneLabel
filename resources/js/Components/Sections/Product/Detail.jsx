@@ -1,12 +1,10 @@
-import { Head } from '@inertiajs/react';
-import { useState } from 'react';
-import { Minus, Plus, Facebook, Twitter, MessageCircle } from 'lucide-react';
-import Alert from '../../../Utils/Alert';
-import RelatedProducts from '../Product/Related';
-import { useCart } from '../../../Contexts/CartContext';
+import { useState, useEffect } from 'react';
+import { Minus, Plus } from 'lucide-react';
 import { router } from '@inertiajs/react';
+import Alert from '../../../Utils/Alert';
+import { useCart } from '../../../Contexts/CartContext';
 
-export default function DetailSection({ product, auth }) {
+export default function DetailSection({ product }) {
     const [quantity, setQuantity] = useState(1);
     const [alertOpen, setAlertOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -24,6 +22,24 @@ export default function DetailSection({ product, auth }) {
     const increment = () => setQuantity(q => q + 1);
     const decrement = () => setQuantity(q => q > 1 ? q - 1 : 1);
 
+    // Keyboard navigation for image gallery
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowLeft') {
+                setCurrentImageIndex(prev => 
+                    prev > 0 ? prev - 1 : allImages.length - 1
+                );
+            } else if (e.key === 'ArrowRight') {
+                setCurrentImageIndex(prev => 
+                    prev < allImages.length - 1 ? prev + 1 : 0
+                );
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [allImages.length]);
+
     return (
         <div className="bg-[#FFFFFF] pt-24 md:pt-32 pb-16 px-4 md:px-8 lg:px-12">
             <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
@@ -33,16 +49,21 @@ export default function DetailSection({ product, auth }) {
                     
                     {/* BAGIAN KIRI: IMAGE GALLERY */}
                     <div className="w-full lg:w-[60%] relative group">
+                        {/* Keyboard navigation hint */}
+                        <div className="absolute top-4 right-4 z-10 bg-black/50 text-white px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                            ← → to navigate
+                        </div>
+                        
                         <div 
                             className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none gap-0 lg:gap-4 no-scrollbar scroll-smooth"
                             onScroll={(e) => {
                                 const scrollLeft = e.target.scrollLeft;
                                 const width = e.target.offsetWidth;
                                 const index = Math.round(scrollLeft / width);
-                                // Optimization: Only update if changed prevents excessive re-renders
-                                // But useState setter already handles identity check usually.
                                 setCurrentImageIndex(index);
                             }}
+                            role="region"
+                            aria-label="Product images gallery"
                         >
                             {allImages.map((img, index) => (
                                 <div 
@@ -51,7 +72,8 @@ export default function DetailSection({ product, auth }) {
                                 >
                                     <img 
                                         src={`/storage/${img}`} 
-                                        alt={`${product.name} ${index + 1}`} 
+                                        alt={`${product.name} - Image ${index + 1} of ${allImages.length}`}
+                                        loading={index === 0 ? "eager" : "lazy"}
                                         className="w-full h-auto object-cover"
                                     />
                                 </div>
@@ -61,15 +83,23 @@ export default function DetailSection({ product, auth }) {
                         {/* Mobile Carousel Indicators (Dots) */}
                         <div className="absolute bottom-4 left-0 right-0 flex lg:hidden justify-center gap-2 z-10">
                             {allImages.map((_, index) => (
-                                <div 
-                                    key={index} 
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentImageIndex(index)}
                                     className={`w-2 h-2 rounded-full transition-all duration-300 shadow-sm ${
                                         index === currentImageIndex 
                                             ? 'bg-white w-6' 
                                             : 'bg-white/50 hover:bg-white/80'
                                     }`}
+                                    aria-label={`View image ${index + 1}`}
+                                    aria-current={index === currentImageIndex}
                                 />
                             ))}
+                        </div>
+                        
+                        {/* Screen reader announcement */}
+                        <div className="sr-only" aria-live="polite" aria-atomic="true">
+                            Image {currentImageIndex + 1} of {allImages.length}
                         </div>
                     </div>
 
@@ -93,7 +123,6 @@ export default function DetailSection({ product, auth }) {
                                 currency: 'IDR', 
                                 minimumFractionDigits: 0 
                             }).format(product.price)}
-                            {/* <span className="ml-3 text-sm text-gray-400 line-through">RP 459.000</span> */}
                         </p>
 
                         {/* Deskripsi Singkat */}
@@ -141,28 +170,46 @@ export default function DetailSection({ product, auth }) {
                             </div>
                         </div>
 
-                        {/* Actions */}
-                        <div className="flex flex-col gap-4">
                             {/* Quantity */}
                             <div className="flex items-center gap-4 mb-2">
                                 <span className="text-xs font-bold uppercase tracking-widest text-[#7C634D]">Quantity</span>
                                 <div className="flex items-center border border-[#7C634D]/30">
-                                    <button onClick={decrement} className="p-2 hover:bg-[#7C634D]/10 transition">
+                                    <button 
+                                        onClick={decrement} 
+                                        className="p-2 hover:bg-[#7C634D]/10 transition focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-inset"
+                                        aria-label="Decrease quantity"
+                                    >
                                         <Minus size={14} color="#7C634D" />
                                     </button>
                                     <input 
-                                        type="text" 
+                                        type="number" 
                                         value={quantity} 
-                                        readOnly 
-                                        className="w-12 text-center text-sm border-none focus:ring-0 p-1 text-[#7C634D] font-medium"
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value) || 1;
+                                            setQuantity(Math.max(1, Math.min(99, val)));
+                                        }}
+                                        onBlur={(e) => {
+                                            // Ensure value is at least 1
+                                            if (!e.target.value || parseInt(e.target.value) < 1) {
+                                                setQuantity(1);
+                                            }
+                                        }}
+                                        min="1"
+                                        max="99"
+                                        className="w-12 text-center text-sm border-none focus:ring-0 p-1 text-[#7C634D] font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     />
-                                    <button onClick={increment} className="p-2 hover:bg-[#7C634D]/10 transition">
+                                    <button 
+                                        onClick={increment} 
+                                        className="p-2 hover:bg-[#7C634D]/10 transition focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-inset"
+                                        aria-label="Increase quantity"
+                                    >
                                         <Plus size={14} color="#7C634D" />
                                     </button>
                                 </div>
                             </div>
 
                             {/* Buttons */}
+                            <div className="flex flex-col gap-4">
                             <button 
                                 onClick={() => addToCart(product, quantity)}
                                 className="group relative w-full py-4 border border-[#7C634D] text-[#7C634D] font-bold text-xs tracking-[0.2em] uppercase overflow-hidden"

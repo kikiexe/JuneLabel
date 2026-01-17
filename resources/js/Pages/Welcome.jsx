@@ -7,10 +7,10 @@ import CopywritingSection from '@/Components/Sections/Home/Copywriting';
 import WhyChooseUsSection from '@/Components/Sections/Home/WhyUs';
 import NewArrivalSection from '@/Components/Sections/Home/NewArrival';
 
-export default function Welcome({ auth, newArrivals, bestSellers }) {
+export default function Welcome({ newArrivals, bestSellers }) {
     return (
         <>
-            <Head title="June Label - Hijab Ternyaman Unutk Kamu" />
+            <Head title="June Label - Hijab Ternyaman Untuk Kamu" />
             
             <Navbar />
             <main>

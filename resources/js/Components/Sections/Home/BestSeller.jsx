@@ -12,7 +12,7 @@ export default function BestSellerSection({ products }) {
   };
 
   return (
-    <section style={{ backgroundColor: '#E6CBC0' }} className="py-12 md:py-20 font-inter">
+    <section style={{ backgroundColor: '#ffffff'}} className="py-12 md:py-20 font-inter">
       <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
         

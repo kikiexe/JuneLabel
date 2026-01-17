@@ -3,6 +3,7 @@ import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import DetailSection from '@/Components/Sections/Product/Detail';
 import RelatedProducts from '@/Components/Sections/Product/Related';
+import BackToTop from '@/Components/UI/BackToTop';
 
 export default function ProductPage({ auth, product, relatedProducts }) {
     return (
@@ -12,10 +13,11 @@ export default function ProductPage({ auth, product, relatedProducts }) {
             <Navbar user={auth.user} />
 
             <main className="flex-grow">
-                <DetailSection product={product} auth={auth} />
+                <DetailSection product={product} />
                 <RelatedProducts products={relatedProducts} />
             </main>
 
+            <BackToTop />
             <Footer />
         </div>
     );
