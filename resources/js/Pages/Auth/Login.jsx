@@ -2,60 +2,24 @@ import InputError from '@/Components/UI/InputError';
 import PrimaryButton from '@/Components/UI/PrimaryButton';
 import TextInput from '@/Components/UI/TextInput';
 import GuestLayout from '@/Components/Layout/GuestLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import Cookies from 'js-cookie';
-import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
-  const [data, setData] = useState({
+  const { data, setData, post, processing, errors, reset } = useForm({
     email: '',
     password: '',
+    remember: false,
   });
 
-  const [errors, setErrors] = useState({});
-  const [processing, setProcessing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    setProcessing(true);
-    setErrors({});
-
-    try {
-      // Get CSRF cookie first
-      await axios.get('/sanctum/csrf-cookie');
-
-      // Login with credentials to create session
-      const response = await axios.post('/api/login', data, {
-        withCredentials: true,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Store token in cookie
-      Cookies.set('token', response.data.access_token, {
-        expires: 14, // Default expiration
-      });
-
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setErrors({ email: 'These credentials do not match our records.' });
-      } else if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
-      } else {
-        console.error('Login failed:', error);
-        setErrors({
-          general: ['Login failed. Please try again.'],
-        });
-      }
-      setProcessing(false);
-    }
+    post(route('login'), {
+      onFinish: () => reset('password'),
+    });
   };
 
   return (

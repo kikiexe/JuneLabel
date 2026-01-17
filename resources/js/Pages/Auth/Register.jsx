@@ -1,66 +1,26 @@
 import InputError from '@/Components/UI/InputError';
 import TextInput from '@/Components/UI/TextInput';
 import GuestLayout from '@/Components/Layout/GuestLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import Cookies from 'js-cookie';
-import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function Register() {
-  const [data, setData] = useState({
+  const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
   });
 
-  const [errors, setErrors] = useState({});
-  const [processing, setProcessing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    setProcessing(true);
-    setErrors({});
-
-    try {
-      // Get CSRF cookie first
-      await axios.get('/sanctum/csrf-cookie');
-
-      // Register with credentials to create session
-      const response = await axios.post('/api/register', data, {
-        withCredentials: true,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Store token in cookie
-      Cookies.set('token', response.data.access_token, { expires: 7 });
-
-      // Redirect based on email verification status
-      if (response.data.email_verified === false) {
-        // Email belum verified, redirect ke halaman verify email
-        window.location.href = '/verify-email';
-      } else {
-        // Email sudah verified, redirect ke dashboard
-        window.location.href = '/dashboard';
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 422) {
-        setErrors(error.response.data.errors);
-      } else {
-        console.error('Registration failed:', error);
-        // Tampilkan error ke user
-        setErrors({
-          general: ['Registration failed. Please try again.'],
-        });
-      }
-      setProcessing(false);
-    }
+    post(route('register'), {
+      onFinish: () => reset('password', 'password_confirmation'),
+    });
   };
 
   return (

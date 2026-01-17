@@ -25,6 +25,11 @@ yarn-error.log
 /.phpunit.cache
 /.zed
 
+# Laravel IDE Helper
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
 # OS & IDE
 *.log
 .DS_Store
