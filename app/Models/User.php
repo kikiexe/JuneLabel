@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,6 +11,11 @@ use Filament\Panel;
 
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder|User create(array $attributes)
+ * @method static \Illuminate\Database\Eloquent\Builder|User find($id)
+ * @method static \Illuminate\Database\Eloquent\Builder|User where($column, $operator = null, $value = null)
+ */
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -52,7 +56,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             'password' => 'hashed',
         ];
     }
-    
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -60,6 +64,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->isAdmin(); 
+        return $this->isAdmin();
     }
 }
