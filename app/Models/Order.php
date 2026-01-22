@@ -13,12 +13,26 @@ use Illuminate\Support\Facades\Log;
 class Order extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
-        'user_id', 'order_code', 'subtotal', 'shipping_cost', 'total_price',
-        'snap_token', 'transaction_id', 'payment_method', 'payment_status',
-        'paid_at', 'order_status', 'customer_name', 'customer_phone',
-        'shipping_address', 'notes'
+        'user_id',
+        'order_code',
+        'subtotal',
+        'shipping_cost',
+        'total_price',
+        'snap_token',
+        'transaction_id',
+        'payment_method',
+        'payment_status',
+        'paid_at',
+        'order_status',
+        'customer_name',
+        'customer_phone',
+        'shipping_address',
+        'shipping_courier',
+        'shipping_service',
+        'shipping_etd',
+        'notes'
     ];
 
     protected $casts = [
@@ -50,17 +64,17 @@ class Order extends Model
             // Payment Status Tracking
             if ($order->isDirty('payment_status')) {
                 $order->payment_status_updated_at = now();
-                
+
                 // Normalize value (handle both Enum and String)
-                $newStatus = $order->payment_status instanceof PaymentStatus 
-                    ? $order->payment_status->value 
+                $newStatus = $order->payment_status instanceof PaymentStatus
+                    ? $order->payment_status->value
                     : $order->payment_status;
-                
+
                 // Auto-set paid_at on success
                 if ($newStatus === 'success' && is_null($order->paid_at)) {
                     $order->paid_at = now();
                 }
-                
+
                 // Audit Log
                 Log::info("Order Payment Status Changed", [
                     'order_id' => $order->id,
@@ -78,11 +92,11 @@ class Order extends Model
             // Order Status Tracking
             if ($order->isDirty('order_status')) {
                 $order->order_status_updated_at = now();
-                
-                $newStatus = $order->order_status instanceof OrderStatus 
-                    ? $order->order_status->value 
+
+                $newStatus = $order->order_status instanceof OrderStatus
+                    ? $order->order_status->value
                     : $order->order_status;
-                
+
                 Log::info("Order Status Changed", [
                     'order_id' => $order->id,
                     'order_code' => $order->order_code,

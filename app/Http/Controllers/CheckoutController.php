@@ -30,6 +30,11 @@ class CheckoutController extends Controller
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
+            // Shipping information
+            'shipping_courier' => 'nullable|string|max:100',
+            'shipping_service' => 'nullable|string|max:100',
+            'shipping_cost' => 'nullable|integer|min:0',
+            'shipping_etd' => 'nullable|string|max:50',
         ]);
 
         try {
@@ -71,9 +76,8 @@ class CheckoutController extends Controller
                     $product->decrement('stock', $item['quantity']);
                 }
 
-                // TODO CRITICAL: Integrasi API Ongkir (RajaOngkir/BinderByte)
-                // Saat ini gratis ongkir = RUGI! Prioritas tinggi!
-                $shippingCost = 0;
+                // Get shipping cost from validated request or default to 0
+                $shippingCost = $validated['shipping_cost'] ?? 0;
                 $totalPrice = $subtotal + $shippingCost;
                 $orderCode = 'ORD-' . strtoupper(Str::random(4)) . '-' . now()->timestamp;
 
@@ -88,6 +92,10 @@ class CheckoutController extends Controller
                     'customer_phone' => $validated['customer_phone'],
                     'shipping_address' => $validated['shipping_address'],
                     'notes' => $validated['notes'] ?? null,
+                    // Shipping courier details for warehouse
+                    'shipping_courier' => $validated['shipping_courier'] ?? null,
+                    'shipping_service' => $validated['shipping_service'] ?? null,
+                    'shipping_etd' => $validated['shipping_etd'] ?? null,
                 ]);
 
                 foreach ($orderItemsData as $data) {

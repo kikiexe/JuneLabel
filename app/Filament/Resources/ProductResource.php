@@ -33,23 +33,45 @@ class ProductResource extends Resource
                         ->required()
                         ->label('Nama Produk')
                         ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                        ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                     Forms\Components\TextInput::make('sku')
                         ->label('SKU (Kode Barang)')
                         ->required()
-                        ->unique(ignoreRecord: true),    
+                        ->unique(ignoreRecord: true),
 
                     Forms\Components\TextInput::make('slug')
                         ->disabled()
                         ->dehydrated()
                         ->required(),
 
-                    Forms\Components\TextInput::make('price')
-                        ->numeric()
-                        ->prefix('Rp')
-                        ->required(),
-                    
+                    Forms\Components\Textarea::make('description')
+                        ->label('Deskripsi')
+                        ->rows(3)
+                        ->columnSpanFull(),
+
+                    Forms\Components\Grid::make(3)->schema([
+                        Forms\Components\TextInput::make('price')
+                            ->required()
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->label('Harga'),
+
+                        Forms\Components\TextInput::make('weight')
+                            ->label('Berat Produk (gram)')
+                            ->required()
+                            ->numeric()
+                            ->default(200)
+                            ->suffix('gram')
+                            ->helperText('Digunakan untuk kalkulasi ongkir otomatis via RajaOngkir.'),
+
+                        Forms\Components\TextInput::make('stock')
+                            ->required()
+                            ->numeric()
+                            ->label('Stok')
+                            ->default(0),
+                    ]),
+
                     Forms\Components\Toggle::make('is_active')
                         ->label('Aktif')
                         ->default(true),
@@ -60,14 +82,14 @@ class ProductResource extends Resource
                 ]),
 
                 Forms\Components\Section::make('Gambar Produk')->schema([
-    
+
                     Forms\Components\FileUpload::make('image')
                         ->label('Foto Utama (Thumbnail)')
                         ->directory('products')
                         ->image()
                         ->imageEditor()
                         ->required(),
-                
+
 
                     Forms\Components\FileUpload::make('gallery')
                         ->label('Galeri Foto Lainnya (Pose Beda)')
@@ -76,9 +98,6 @@ class ProductResource extends Resource
                         ->multiple()
                         ->reorderable()
                         ->panelLayout('grid')
-                        ->columnSpanFull(),
-                        
-                    Forms\Components\RichEditor::make('description')
                         ->columnSpanFull(),
                 ])
             ]);
@@ -92,6 +111,19 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('category.name')->label('Kategori'),
                 Tables\Columns\TextColumn::make('price')->money('IDR'),
+                Tables\Columns\TextColumn::make('weight')
+                    ->label('Berat')
+                    ->suffix(' g')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('stock')
+                    ->label('Stok')
+                    ->sortable()
+                    ->badge()
+                    ->color(fn(string $state): string => match (true) {
+                        $state == 0 => 'danger',
+                        $state < 5 => 'warning',
+                        default => 'success',
+                    }),
                 Tables\Columns\ToggleColumn::make('is_active'),
                 Tables\Columns\ToggleColumn::make('is_best_seller')->label('Best Seller'),
             ])

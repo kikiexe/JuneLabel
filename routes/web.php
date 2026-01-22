@@ -106,4 +106,13 @@ Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/order-complete/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');
 
-require __DIR__.'/auth.php';
+// Shipping / RajaOngkir API Routes
+Route::prefix('api/shipping')->group(function () {
+    Route::get('/provinces', [App\Http\Controllers\ShippingController::class, 'getProvinces'])->name('shipping.provinces');
+    Route::get('/cities/{provinceId}', [App\Http\Controllers\ShippingController::class, 'getCities'])->name('shipping.cities');
+    Route::get('/districts/{cityId}', [App\Http\Controllers\ShippingController::class, 'getDistricts'])->name('shipping.districts');
+    Route::post('/calculate-cost', [App\Http\Controllers\ShippingController::class, 'calculateCost'])->name('shipping.calculate');
+    Route::post('/search-destination', [App\Http\Controllers\ShippingController::class, 'searchDestination'])->name('shipping.search');
+});
+
+require __DIR__ . '/auth.php';
