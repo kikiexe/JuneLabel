@@ -6,11 +6,11 @@ Proyek E-commerce berbasis Laravel 11, Inertia.js (React), dan FilamentPHP.
 
 Pastikan sistem Anda sudah memiliki:
 
--   **PHP:** Versi `8.3` atau lebih baru
--   **Composer:** Versi `2.x`
--   **Node.js:** Versi `20.x` atau lebih baru (LTS recommended)
--   **npm:** Versi `10.x` atau lebih baru
--   **Database:** MySQL, PostgreSQL, atau SQLite
+- **PHP:** Versi `8.3` atau lebih baru
+- **Composer:** Versi `2.x`
+- **Node.js:** Versi `20.x` atau lebih baru (LTS recommended)
+- **npm:** Versi `10.x` atau lebih baru
+- **Database:** MySQL, PostgreSQL, atau SQLite
 
 ---
 
@@ -23,18 +23,26 @@ Ikuti langkah ini satu per satu agar aplikasi berjalan lancar.
 Download source code dari GitHub:
 
 ```bash
-git clone https://github.com/USERNAME_KAMU/junelabel.git
+git clone https://github.com/kikiexe/junelabel.git
 cd junelabel
 ```
 
 ### 2. Install Library
 
-Download semua paket PHP dan JavaScript yang dibutuhkan:
+Download semua paket PHP dan JavaScript yang dibutuhkan (termasuk library Midtrans & Filament):
 
 ```bash
 composer install
 npm install
 ```
+
+> **Catatan Penting:**
+> Project ini menggunakan layanan payment gateway **Midtrans**. Secara default `composer install` sudah menginstallnya.
+> Namun jika nanti ada error `Class 'Midtrans\Config' not found`, kamu bisa install manual dengan perintah:
+>
+> ```bash
+> composer require midtrans/midtrans-php
+> ```
 
 ### 3. Setup Environment
 
@@ -55,13 +63,42 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-### 4. Generate Key Aplikasi
+### 4. Konfigurasi API (Penting!)
+
+Aplikasi ini membutuhkan API Key dari pihak ketiga agar fitur Ongkir dan Pembayaran berjalan.
+Buka file `.env` dan isi bagian berikut:
+
+**A. Midtrans (Payment Gateway)**
+
+1. Daftar/Login di [Midtrans Sandbox](https://dashboard.sandbox.midtrans.com/)
+2. Masuk menu `Settings` > `Access Keys`
+3. Copy Server Key & Client Key ke `.env`:
+
+```env
+MIDTRANS_SERVER_KEY=SB-Mid-server-xxxx...
+MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxx...
+MIDTRANS_IS_PRODUCTION=false
+```
+
+**B. RajaOngkir (Cek Ongkos Kirim)**
+
+1. Daftar di [RajaOngkir Komerce](https://rajaongkir.komerce.id/)
+2. Copy API Key dan ID Kecamatan Asal Pengiriman (Origin District ID) ke `.env`:
+
+```env
+RAJAONGKIR_API_KEY=your_rajaongkir_key_here
+RAJAONGKIR_ORIGIN_DISTRICT_ID=5473
+```
+
+_(Catatan: 5473 adalah contoh ID kecamatan. Ganti sesuai lokasi toko)_
+
+### 5. Generate Key Aplikasi
 
 ```bash
 php artisan key:generate
 ```
 
-### 5. Setup Database
+### 6. Setup Database
 
 1. Buka aplikasi database manager (HeidiSQL / Laragon / TablePlus / phpMyAdmin)
 2. Buat database kosong baru dengan nama: `junelabel`
@@ -71,7 +108,7 @@ php artisan key:generate
 php artisan migrate
 ```
 
-### 6. Buat Akun Admin (Filament)
+### 7. Buat Akun Admin (Filament)
 
 Buat user untuk login ke dashboard admin:
 
@@ -101,8 +138,8 @@ npm run dev
 
 **Akses Link:**
 
--   **Toko (Frontend):** [http://127.0.0.1:8000](http://127.0.0.1:8000)
--   **Admin Panel:** [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+- **Toko (Frontend):** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Admin Panel:** [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
 
 ---
 
@@ -112,13 +149,13 @@ npm run dev
 2. File `.env` tidak ada di GitHub demi keamanan
 3. Jika muncul error **"Vite manifest not found"**, pastikan `npm run dev` sudah dijalankan minimal sekali
 4. Jika ada error tentang **"SQLSTATE"**, pastikan:
-    - Database sudah dibuat
-    - Koneksi database di `.env` sudah benar
-    - Service MySQL sedang berjalan
+   - Database sudah dibuat
+   - Koneksi database di `.env` sudah benar
+   - Service MySQL sedang berjalan
 5. Untuk development, tambahkan data dummy dengan:
-    ```bash
-    php artisan db:seed
-    ```
+   ```bash
+   php artisan db:seed
+   ```
 
 ## Troubleshooting
 
