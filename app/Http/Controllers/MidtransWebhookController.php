@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Enum\PaymentStatus;
@@ -62,68 +63,71 @@ class MidtransWebhookController extends Controller
                 ], 403);
             }
 
-            // Find the order
-            $order = Order::where('order_id', $orderId)->first();
+            return DB::transaction(function () use ($orderId, $transactionStatus, $fraudStatus, $paymentType, $notification) {
+                // Find the order with lock
+                $order = Order::where('order_id', $orderId)->lockForUpdate()->first();
 
-            if (!$order) {
-                Log::error('Order not found for Midtrans notification', [
-                    'order_id' => $orderId
-                ]);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Order not found'
-                ], 404);
-            }
+                if (!$order) {
+                    Log::error('Order not found for Midtrans notification', [
+                        'order_id' => $orderId
+                    ]);
+                    // Return 404 but wrapped in JSON response since it is API
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Order not found'
+                    ], 404);
+                }
 
-            // Update order based on transaction status
-            if ($transactionStatus == 'capture') {
-                if ($fraudStatus == 'accept') {
-                    // Payment success (credit card)
+                // Update order based on transaction status
+                if ($transactionStatus == 'capture') {
+                    if ($fraudStatus == 'accept') {
+                        // Payment success (credit card)
+                        $order->payment_status = PaymentStatus::Success;
+                        $order->transaction_id = $notification->transaction_id;
+                        $order->payment_method = $paymentType;
+                        $order->paid_at = now();
+                    } else {
+                        // Payment flagged as fraud
+                        $order->payment_status = PaymentStatus::Failed;
+                        $order->transaction_id = $notification->transaction_id;
+                        $order->payment_method = $paymentType;
+                    }
+                } elseif ($transactionStatus == 'settlement') {
+                    // Payment success
                     $order->payment_status = PaymentStatus::Success;
                     $order->transaction_id = $notification->transaction_id;
                     $order->payment_method = $paymentType;
                     $order->paid_at = now();
-                } else {
-                    // Payment flagged as fraud
+                } elseif ($transactionStatus == 'pending') {
+                    // Payment pending
+                    $order->payment_status = PaymentStatus::Pending;
+                    $order->transaction_id = $notification->transaction_id;
+                    $order->payment_method = $paymentType;
+                } elseif ($transactionStatus == 'deny' || $transactionStatus == 'cancel') {
+                    // Payment denied or cancelled
                     $order->payment_status = PaymentStatus::Failed;
                     $order->transaction_id = $notification->transaction_id;
                     $order->payment_method = $paymentType;
+                } elseif ($transactionStatus == 'expire') {
+                    // Payment expired
+                    $order->payment_status = PaymentStatus::Expired;
+                    $order->transaction_id = $notification->transaction_id;
+                    $order->payment_method = $paymentType;
                 }
-            } elseif ($transactionStatus == 'settlement') {
-                // Payment success
-                $order->payment_status = PaymentStatus::Success;
-                $order->transaction_id = $notification->transaction_id;
-                $order->payment_method = $paymentType;
-                $order->paid_at = now();
-            } elseif ($transactionStatus == 'pending') {
-                // Payment pending
-                $order->payment_status = PaymentStatus::Pending;
-                $order->transaction_id = $notification->transaction_id;
-                $order->payment_method = $paymentType;
-            } elseif ($transactionStatus == 'deny' || $transactionStatus == 'cancel') {
-                // Payment denied or cancelled
-                $order->payment_status = PaymentStatus::Failed;
-                $order->transaction_id = $notification->transaction_id;
-                $order->payment_method = $paymentType;
-            } elseif ($transactionStatus == 'expire') {
-                // Payment expired
-                $order->payment_status = PaymentStatus::Expired;
-                $order->transaction_id = $notification->transaction_id;
-                $order->payment_method = $paymentType;
-            }
 
-            $order->save();
+                $order->save();
 
-            Log::info('Order status updated from Midtrans notification', [
-                'order_id' => $orderId,
-                'payment_status' => $order->payment_status,
-                'transaction_id' => $order->transaction_id
-            ]);
+                Log::info('Order status updated from Midtrans notification', [
+                    'order_id' => $orderId,
+                    'payment_status' => $order->payment_status,
+                    'transaction_id' => $order->transaction_id
+                ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Notification processed'
-            ]);
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Notification processed'
+                ]);
+            });
         } catch (\Exception $e) {
             Log::error('Error processing Midtrans notification', [
                 'error' => $e->getMessage(),
