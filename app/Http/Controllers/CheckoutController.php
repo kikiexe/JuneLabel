@@ -32,8 +32,9 @@ class CheckoutController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             // Shipping information
             'shipping_courier' => 'nullable|string|max:100',
-            'shipping_service' => 'nullable|string|max:100',
-            'shipping_cost' => 'nullable|integer|min:0',
+            'shipping_service' => 'required_with:shipping_courier|string|max:100',
+            // 'shipping_cost' => 'nullable|integer|min:0', // We calculate this server-side now
+            'destination_district_id' => 'required_with:shipping_courier|integer',
             'shipping_etd' => 'nullable|string|max:50',
         ]);
 
@@ -48,6 +49,7 @@ class CheckoutController extends Controller
                     ->keyBy('id');
 
                 $subtotal = 0;
+                $totalWeight = 0;
                 $orderItemsData = [];
 
                 foreach ($validated['items'] as $item) {
@@ -64,6 +66,7 @@ class CheckoutController extends Controller
                     $lineTotal = $price * $item['quantity'];
 
                     $subtotal += $lineTotal;
+                    $totalWeight += ($product->weight ?? 200) * $item['quantity'];
 
                     $orderItemsData[] = [
                         'product_id' => $product->id,
@@ -76,8 +79,35 @@ class CheckoutController extends Controller
                     $product->decrement('stock', $item['quantity']);
                 }
 
-                // Get shipping cost from validated request or default to 0
-                $shippingCost = $validated['shipping_cost'] ?? 0;
+                // Server-side Shipping Cost Calculation
+                $shippingCost = 0;
+                if (!empty($validated['shipping_courier']) && !empty($validated['destination_district_id'])) {
+                    $rajaOngkir = app(\App\Services\RajaOngkirService::class);
+                    $costs = $rajaOngkir->calculateShippingCost(
+                        $validated['destination_district_id'],
+                        $totalWeight,
+                        strtolower($validated['shipping_courier'])
+                    );
+
+                    $validOption = null;
+                    if ($costs) {
+                        foreach ($costs as $option) {
+                            if (strcasecmp($option['service'], $validated['shipping_service']) === 0) {
+                                $validOption = $option;
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($validOption) {
+                        $shippingCost = $validOption['cost'];
+                        // Optional: Overwrite ETD with server data to be safe
+                        $validated['shipping_etd'] = $validOption['etd'];
+                    } else {
+                        // Fail if cost verification fails (security)
+                        throw new \Exception("Invalid shipping service selected or price changed. Please refresh and try again.");
+                    }
+                }
                 $grossAmount = $subtotal + $shippingCost;
                 $orderId = 'ORD-' . strtoupper(Str::random(4)) . '-' . now()->timestamp;
 
@@ -160,7 +190,8 @@ class CheckoutController extends Controller
                         'order_id' => $orderId,
                         'params' => $midtransParams
                     ]);
-                    // Continue without snap token - user can still pay via other method
+                    // CRITICAL: Rollback if payment gateway fails
+                    throw new \Exception("Payment gateway error. Please try again later.");
                 }
 
 

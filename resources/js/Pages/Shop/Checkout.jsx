@@ -31,6 +31,7 @@ export default function Checkout() {
     shipping_service: '',
     shipping_cost: 0,
     shipping_etd: '',
+    destination_district_id: '',
   });
 
   useEffect(() => {
@@ -107,6 +108,7 @@ export default function Checkout() {
       shipping_service: '',
       shipping_cost: 0,
       shipping_etd: '',
+      destination_district_id: districtId,
     }));
 
     if (districtId) {
