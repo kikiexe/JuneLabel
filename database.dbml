@@ -45,7 +45,7 @@ Table carts {
   quantity integer [default: 1]
   created_at timestamp
   updated_at timestamp
-  
+
   indexes {
     (identifier, product_id) [unique]
   }
@@ -54,29 +54,29 @@ Table carts {
 Table orders {
   id integer [primary key, increment]
   user_id integer [null]
-  order_code varchar [unique, not null]
-  
+  order_id varchar [unique, not null]
+
   // Pricing
   subtotal decimal [note: "Total harga produk"]
   shipping_cost decimal [default: 0]
-  total_price decimal [note: "subtotal + shipping_cost"]
-  
+  gross_amount decimal [note: "subtotal + shipping_cost"]
+
   // Payment
   snap_token varchar [null]
   transaction_id varchar [null]
   payment_method varchar [null]
   payment_status enum('pending', 'success', 'failed', 'expired') [default: 'pending']
   paid_at timestamp [null]
-  
+
   // Order
   order_status enum('pending', 'processing', 'shipped', 'delivered', 'cancelled') [default: 'pending']
-  
+
   // Shipping
   customer_name varchar [not null]
   customer_phone varchar [not null]
   shipping_address text [not null]
   notes text [null]
-  
+
   created_at timestamp
   updated_at timestamp
 }
@@ -92,7 +92,7 @@ Table order_items {
   created_at timestamp
 }
 
-// Relationships 
+// Relationships
 Ref: products.category_id > categories.id [delete: set null]
 Ref: carts.user_id > users.id [delete: cascade]
 Ref: carts.product_id > products.id [delete: cascade]
