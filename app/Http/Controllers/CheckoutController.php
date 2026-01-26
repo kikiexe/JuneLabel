@@ -78,15 +78,15 @@ class CheckoutController extends Controller
 
                 // Get shipping cost from validated request or default to 0
                 $shippingCost = $validated['shipping_cost'] ?? 0;
-                $totalPrice = $subtotal + $shippingCost;
-                $orderCode = 'ORD-' . strtoupper(Str::random(4)) . '-' . now()->timestamp;
+                $grossAmount = $subtotal + $shippingCost;
+                $orderId = 'ORD-' . strtoupper(Str::random(4)) . '-' . now()->timestamp;
 
                 $order = Order::create([
                     'user_id' => auth()->id(),
-                    'order_code' => $orderCode,
+                    'order_id' => $orderId,
                     'subtotal' => $subtotal,
                     'shipping_cost' => $shippingCost,
-                    'total_price' => $totalPrice,
+                    'gross_amount' => $grossAmount,
                     'payment_status' => PaymentStatus::Pending,
                     'customer_name' => $validated['customer_name'],
                     'customer_phone' => $validated['customer_phone'],
@@ -102,7 +102,69 @@ class CheckoutController extends Controller
                     $order->orderItems()->create($data);
                 }
 
-                return redirect()->route('order.complete', ['order' => $order->order_code])
+                // Generate Midtrans Snap Token
+                \Midtrans\Config::$serverKey = config('midtrans.server_key');
+                \Midtrans\Config::$isProduction = config('midtrans.is_production');
+                \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+                \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+                // Prepare items for Midtrans
+                $midtransItems = [];
+                foreach ($orderItemsData as $item) {
+                    $midtransItems[] = [
+                        'id' => $item['product_id'],
+                        'price' => (int) $item['unit_price'],
+                        'quantity' => $item['quantity'],
+                        'name' => $item['product_name'],
+                    ];
+                }
+
+                // Add shipping as item
+                if ($shippingCost > 0) {
+                    $midtransItems[] = [
+                        'id' => 'SHIPPING',
+                        'price' => (int) $shippingCost,
+                        'quantity' => 1,
+                        'name' => 'Shipping Cost - ' . ($validated['shipping_courier'] ?? 'Standard'),
+                    ];
+                }
+
+                $midtransParams = [
+                    'transaction_details' => [
+                        'order_id' => $orderId,
+                        'gross_amount' => (int) $grossAmount,
+                    ],
+                    'item_details' => $midtransItems,
+                    'customer_details' => [
+                        'first_name' => $validated['customer_name'],
+                        'email' => auth()->user()->email ?? 'guest@junelabel.com',
+                        'phone' => $validated['customer_phone'],
+                        'billing_address' => [
+                            'address' => $validated['shipping_address'],
+                        ],
+                        'shipping_address' => [
+                            'address' => $validated['shipping_address'],
+                        ],
+                    ],
+                    'callbacks' => [
+                        'finish' => route('order.complete', ['order' => $orderId]),
+                    ],
+                ];
+
+                try {
+                    $snapToken = \Midtrans\Snap::getSnapToken($midtransParams);
+                    $order->snap_token = $snapToken;
+                    $order->save();
+                } catch (\Exception $e) {
+                    Log::error('Midtrans Snap Token Error: ' . $e->getMessage(), [
+                        'order_id' => $orderId,
+                        'params' => $midtransParams
+                    ]);
+                    // Continue without snap token - user can still pay via other method
+                }
+
+
+                return redirect()->route('order.complete', ['order' => $order->order_id])
                     ->with('success', 'Order created successfully. Please proceed to payment.');
             });
         } catch (\Exception $e) {
@@ -120,7 +182,7 @@ class CheckoutController extends Controller
 
     public function complete($orderCode)
     {
-        $order = Order::with('orderItems')->where('order_code', $orderCode)->firstOrFail();
+        $order = Order::with('orderItems')->where('order_id', $orderCode)->firstOrFail();
 
         if (auth()->check() && $order->user_id !== auth()->id()) {
             abort(403);

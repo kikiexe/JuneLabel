@@ -496,7 +496,14 @@ export default function Checkout() {
 
               <div className="hidden lg:block mt-8">
                 <button
-                  onClick={handleSubmit}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Trigger the form submission
+                    const form = document.querySelector('form');
+                    if (form) {
+                      form.requestSubmit();
+                    }
+                  }}
                   disabled={processing}
                   className="w-full bg-[#7C634D] text-white py-4 font-bold text-sm tracking-widest uppercase hover:bg-[#65503D] transition-colors disabled:opacity-70 group relative overflow-hidden"
                 >

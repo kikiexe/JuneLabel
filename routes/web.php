@@ -104,7 +104,7 @@ Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name
 
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('/order-complete/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');
+Route::get('/order/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');
 
 // Shipping / RajaOngkir API Routes
 Route::prefix('api/shipping')->group(function () {
@@ -114,5 +114,13 @@ Route::prefix('api/shipping')->group(function () {
     Route::post('/calculate-cost', [App\Http\Controllers\ShippingController::class, 'calculateCost'])->name('shipping.calculate');
     Route::post('/search-destination', [App\Http\Controllers\ShippingController::class, 'searchDestination'])->name('shipping.search');
 });
+
+// Midtrans Payment Webhook & API Routes
+Route::post('/midtrans/notification', [App\Http\Controllers\MidtransWebhookController::class, 'handle'])
+    ->name('midtrans.notification');
+
+Route::get('/midtrans/check-status/{orderId}', [App\Http\Controllers\MidtransWebhookController::class, 'checkStatus'])
+    ->name('midtrans.check-status');
+
 
 require __DIR__ . '/auth.php';

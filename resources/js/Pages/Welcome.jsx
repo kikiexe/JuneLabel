@@ -11,7 +11,7 @@ export default function Welcome({ newArrivals, bestSellers }) {
     return (
         <>
             <Head title="June Label - Hijab Ternyaman Untuk Kamu" />
-            
+
             <Navbar />
             <main>
                 <HeroSection />

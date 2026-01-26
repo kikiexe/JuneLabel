@@ -16,10 +16,10 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'order_code',
+        'order_id',
         'subtotal',
         'shipping_cost',
-        'total_price',
+        'gross_amount',
         'snap_token',
         'transaction_id',
         'payment_method',
@@ -40,7 +40,7 @@ class Order extends Model
         'payment_status' => PaymentStatus::class,
         'subtotal' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
-        'total_price' => 'decimal:2',
+        'gross_amount' => 'decimal:2',
         'paid_at' => 'datetime',
         'payment_status_updated_at' => 'datetime',
         'order_status_updated_at' => 'datetime',
@@ -78,7 +78,7 @@ class Order extends Model
                 // Audit Log
                 Log::info("Order Payment Status Changed", [
                     'order_id' => $order->id,
-                    'order_code' => $order->order_code,
+                    'order_id' => $order->order_id,
                     'from' => $order->getOriginal('payment_status'),
                     'to' => $newStatus,
                     'actor' => auth()->user()?->name ?? 'System/Webhook',
@@ -99,7 +99,7 @@ class Order extends Model
 
                 Log::info("Order Status Changed", [
                     'order_id' => $order->id,
-                    'order_code' => $order->order_code,
+                    'order_id' => $order->order_id,
                     'from' => $order->getOriginal('order_status'),
                     'to' => $newStatus,
                     'actor' => auth()->user()?->name ?? 'System/Webhook',
