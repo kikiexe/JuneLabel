@@ -26,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Vite::prefetch(concurrency: 3);
+
+        // Register observer untuk auto-clear cache
+        \App\Models\Product::observe(\App\Observers\ProductObserver::class);
     }
 }

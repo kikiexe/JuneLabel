@@ -4,22 +4,29 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use App\Models\Product;
 
 Route::get('/', function () {
-    $newArrivals = Product::query()
-        ->where('is_active', true)
-        ->latest()
-        ->take(4)
-        ->get();
+    // Cache new arrivals selama 1 jam (3600 detik)
+    $newArrivals = Cache::remember('homepage.new_arrivals', 3600, function () {
+        return Product::with('category')
+            ->where('is_active', true)
+            ->latest()
+            ->take(4)
+            ->get();
+    });
 
-    $bestSellers = Product::query()
-        ->where('is_active', true)
-        ->where('is_best_seller', true)
-        ->latest()
-        ->take(4)
-        ->get();
+    // Cache best sellers selama 1 jam
+    $bestSellers = Cache::remember('homepage.best_sellers', 3600, function () {
+        return Product::with('category')
+            ->where('is_active', true)
+            ->where('is_best_seller', true)
+            ->latest()
+            ->take(4)
+            ->get();
+    });
 
     return Inertia::render('Welcome', [
         'newArrivals' => $newArrivals,
@@ -31,11 +38,15 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/product/{slug}', function ($slug) {
-    $product = Product::where('slug', $slug)
+    // Fix N+1: Eager load category
+    $product = Product::with('category')
+        ->where('slug', $slug)
         ->where('is_active', true)
         ->firstOrFail();
 
-    $relatedProducts = Product::where('id', '!=', $product->id)
+    // Fix N+1: Eager load category
+    $relatedProducts = Product::with('category')
+        ->where('id', '!=', $product->id)
         ->where('is_active', true)
         ->inRandomOrder()
         ->take(4)
@@ -155,12 +166,18 @@ Route::get('/cart', function () {
 Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
 
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+
+// Rate limiting: Max 10 checkout per menit untuk prevent spam
+Route::middleware(['throttle:10,1'])->group(function () {
+    Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+});
+
 Route::get('/order/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');
 Route::post('/order/{orderId}/cancel', [App\Http\Controllers\CheckoutController::class, 'cancel'])->middleware('auth')->name('order.cancel');
 
 // Shipping / RajaOngkir API Routes
-Route::prefix('api/shipping')->group(function () {
+// Rate limiting: Max 60 requests per menit untuk API shipping
+Route::prefix('api/shipping')->middleware(['throttle:60,1'])->group(function () {
     Route::get('/provinces', [App\Http\Controllers\ShippingController::class, 'getProvinces'])->name('shipping.provinces');
     Route::get('/cities/{provinceId}', [App\Http\Controllers\ShippingController::class, 'getCities'])->name('shipping.cities');
     Route::get('/districts/{cityId}', [App\Http\Controllers\ShippingController::class, 'getDistricts'])->name('shipping.districts');
