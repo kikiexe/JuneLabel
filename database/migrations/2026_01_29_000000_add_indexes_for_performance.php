@@ -13,8 +13,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Helper function untuk cek index exist
+        // Helper function untuk cek index exist (Support MySQL & SQLite)
         $indexExists = function ($table, $indexName) {
+            $driver = DB::getDriverName();
+
+            if ($driver === 'sqlite') {
+                $result = DB::select("PRAGMA index_list({$table})");
+                foreach ($result as $index) {
+                    if ($index->name === $indexName) return true;
+                }
+                return false;
+            }
+
+            // MySQL / MariaDB
             $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
             return count($indexes) > 0;
         };

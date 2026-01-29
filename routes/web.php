@@ -59,7 +59,7 @@ Route::get('/product/{slug}', function ($slug) {
 })->name('product.detail');
 
 Route::get('/dashboard', function () {
-    $user = auth()->user();
+    $user = Auth::user();
 
     if (!$user) {
         return redirect()->route('login');
@@ -97,7 +97,7 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 Route::get('/my-orders', function () {
-    $user = auth()->user();
+    $user = Auth::user();
 
     if (!$user) {
         return redirect()->route('login');
@@ -155,9 +155,11 @@ Route::get('/shipping-policy', function () {
     return inertia('Information/ShippingPolicy');
 })->name('shipping.policy');
 
-Route::get('/track-order', function () {
-    return inertia('Information/TrackOrder');
-})->name('track.order');
+// Tracking Order Feature
+Route::get('/track-order', [App\Http\Controllers\TrackingController::class, 'index'])->name('track.order');
+Route::post('/api/track-order', [App\Http\Controllers\TrackingController::class, 'check'])
+    ->middleware(['throttle:5,1'])
+    ->name('tracking.check');
 
 Route::get('/cart', function () {
     return Inertia::render('Shop/Cart');
@@ -197,6 +199,15 @@ Route::post('/api/newsletter/subscribe', [App\Http\Controllers\NewsletterControl
 Route::post('/api/contact/submit', [App\Http\Controllers\ContactController::class, 'submit'])
     ->middleware(['throttle:3,1'])
     ->name('contact.submit');
+
+// Cart API Routes
+Route::prefix('api/cart')->group(function () {
+    Route::get('/', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::get('/count', [App\Http\Controllers\CartController::class, 'count'])->name('cart.count');
+    Route::post('/add', [App\Http\Controllers\CartController::class, 'store'])->name('cart.store');
+    Route::post('/update/{id}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+    Route::post('/remove/{id}', [App\Http\Controllers\CartController::class, 'destroy'])->name('cart.destroy');
+});
 
 // Midtrans Payment Webhook & API Routes
 Route::post('/midtrans/notification', [App\Http\Controllers\MidtransWebhookController::class, 'handle'])

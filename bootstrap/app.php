@@ -25,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'midtrans/notification',
             'api/newsletter/subscribe',
             'api/contact/submit',
+            'api/cart/*', // Exclude semua route cart
+            'api/track-order',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
