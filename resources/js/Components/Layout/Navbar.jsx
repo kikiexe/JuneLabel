@@ -25,6 +25,15 @@ export default function Navbar() {
   const [alertOpen, setAlertOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [collectionsOpen, setCollectionsOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories dari API
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch((err) => console.error('Failed to fetch categories:', err));
+  }, []);
 
   const handleEmailClick = (e) => {
     e.preventDefault();
@@ -103,29 +112,13 @@ export default function Navbar() {
 
               <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
                 <div className="flex flex-col py-4 px-6 space-y-4">
-                  {[
-                    { name: 'Pashmina Tencel', slug: 'pashmina-tencel' },
-                    {
-                      name: 'Pashmina Viscose Rayon',
-                      slug: 'pashmina-viscose-rayon',
-                    },
-                    { name: 'Paris Japan Ori', slug: 'paris-japan-ori' },
-                    {
-                      name: 'Paris Jadul Premium',
-                      slug: 'paris-jadul-premium',
-                    },
-                    {
-                      name: 'Pashmina Inner Tencel',
-                      slug: 'pashmina-inner-tencel',
-                    },
-                    { name: 'Hijab Printing', slug: 'hijab-printing' },
-                  ].map((item, index) => (
+                  {categories.map((category) => (
                     <Link
-                      key={index}
-                      href={route('shop.index', { category: item.slug })}
+                      key={category.id}
+                      href={route('shop.index', { category: category.slug })}
                       className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
                     >
-                      {item.name}
+                      {category.name}
                     </Link>
                   ))}
                 </div>
@@ -248,36 +241,19 @@ export default function Navbar() {
                   {collectionsOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </button>
 
-                {/* Submenu Mobile */}
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#F8F1EB] ${
                     collectionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
                   <div className="flex flex-col py-2">
-                    {[
-                      { name: 'Pashmina Tencel', slug: 'pashmina-tencel' },
-                      {
-                        name: 'Pashmina Viscose Rayon',
-                        slug: 'pashmina-viscose-rayon',
-                      },
-                      { name: 'Paris Japan Ori', slug: 'paris-japan-ori' },
-                      {
-                        name: 'Paris Jadul Premium',
-                        slug: 'paris-jadul-premium',
-                      },
-                      {
-                        name: 'Pashmina Inner Tencel',
-                        slug: 'pashmina-inner-tencel',
-                      },
-                      { name: 'Hijab Printing', slug: 'hijab-printing' },
-                    ].map((item, index) => (
+                    {categories.map((category) => (
                       <Link
-                        key={index}
-                        href={route('shop.index', { category: item.slug })}
+                        key={category.id}
+                        href={route('shop.index', { category: category.slug })}
                         className="pl-10 pr-6 py-3 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
                       >
-                        {item.name}
+                        {category.name}
                       </Link>
                     ))}
                   </div>

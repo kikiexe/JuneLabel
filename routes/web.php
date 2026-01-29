@@ -185,6 +185,19 @@ Route::prefix('api/shipping')->middleware(['throttle:60,1'])->group(function () 
     Route::post('/search-destination', [App\Http\Controllers\ShippingController::class, 'searchDestination'])->name('shipping.search');
 });
 
+// Categories API
+Route::get('/api/categories', [App\Http\Controllers\CategoryController::class, 'index'])->name('api.categories');
+
+// Newsletter Subscribe (rate limit: 5 per menit untuk prevent spam)
+Route::post('/api/newsletter/subscribe', [App\Http\Controllers\NewsletterController::class, 'subscribe'])
+    ->middleware(['throttle:5,1'])
+    ->name('newsletter.subscribe');
+
+// Contact Form Submit (rate limit: 3 per menit untuk prevent spam)
+Route::post('/api/contact/submit', [App\Http\Controllers\ContactController::class, 'submit'])
+    ->middleware(['throttle:3,1'])
+    ->name('contact.submit');
+
 // Midtrans Payment Webhook & API Routes
 Route::post('/midtrans/notification', [App\Http\Controllers\MidtransWebhookController::class, 'handle'])
     ->name('midtrans.notification');

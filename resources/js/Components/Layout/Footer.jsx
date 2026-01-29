@@ -14,13 +14,14 @@ export default function Footer() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDevFeature = (e) => {
     e.preventDefault();
     setAlertOpen(true);
   };
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
 
     // Validate email
@@ -30,14 +31,39 @@ export default function Footer() {
     }
 
     setEmailError('');
-    setToastMessage(`Thank you! ${email} has been subscribed to our newsletter.`);
-    setShowToast(true);
-    setEmail('');
+    setIsSubmitting(true);
 
-    // Auto hide toast after 3 seconds
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN':
+            document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setToastMessage(data.message);
+        setShowToast(true);
+        setEmail('');
+
+        // Auto hide toast after 5 seconds
+        setTimeout(() => {
+          setShowToast(false);
+        }, 5000);
+      } else {
+        setEmailError(data.message);
+      }
+    } catch (error) {
+      setEmailError('Terjadi kesalahan. Silakan coba lagi.');
+      console.error('Newsletter subscribe error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -250,9 +276,10 @@ export default function Footer() {
               {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
               <button
                 type="submit"
-                className="mt-3 text-xs tracking-[0.15em] text-[#020002] font-bold uppercase hover:opacity-70 transition-opacity"
+                disabled={isSubmitting}
+                className="mt-3 text-xs tracking-[0.15em] text-[#020002] font-bold uppercase hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                SUBSCRIBE →
+                {isSubmitting ? 'SUBSCRIBING...' : 'SUBSCRIBE →'}
               </button>
             </form>
           </div>

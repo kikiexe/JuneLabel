@@ -1,4 +1,5 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import SeoHead from '@/Components/SeoHead';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import { useState, useEffect } from 'react';
@@ -10,6 +11,12 @@ export default function ShopIndex({ products, categories, filters }) {
   const [selectedCategory, setSelectedCategory] = useState(filters.category || '');
   const [sort, setSort] = useState(filters.sort || 'latest');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // SEO
+  const pageTitle = filters.category
+    ? categories.find((c) => c.slug === filters.category)?.name || 'Shop'
+    : 'Shop Collection';
+  const pageDescription = `Discover our premium ${filters.category || 'hijab'} collection. ${products.total} products available.`;
 
   const sortOptions = [
     { value: 'newest', label: 'Newest' },
@@ -71,7 +78,7 @@ export default function ShopIndex({ products, categories, filters }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-inter text-[#7C634D]">
-      <Head title="Shop Collection - June Label" />
+      <SeoHead title={pageTitle} description={pageDescription} url={window.location.href} />
       <Navbar />
 
       <div className="bg-[#FFF6EC] pt-28 pb-12 px-4 md:px-8 lg:px-16 text-center">
@@ -319,8 +326,8 @@ export default function ShopIndex({ products, categories, filters }) {
                             link.active
                               ? 'bg-[#7C634D] text-white border-[#7C634D]'
                               : !link.url
-                              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                              : 'bg-white text-[#7C634D] border-[#7C634D]/30 hover:bg-[#7C634D]/10'
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                : 'bg-white text-[#7C634D] border-[#7C634D]/30 hover:bg-[#7C634D]/10'
                           }`}
                         >
                           {decodeLabel(link.label)}
