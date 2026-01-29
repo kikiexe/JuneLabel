@@ -24,6 +24,7 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'customer_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
             'notes' => 'nullable|string',
@@ -39,7 +40,7 @@ class CheckoutController extends Controller
         ]);
 
         try {
-            return DB::transaction(function () use ($validated, $request) {
+            $order = DB::transaction(function () use ($validated, $request) {
                 $itemIds = collect($validated['items'])->pluck('id');
 
                 // Lock produk untuk mencegah race condition pada stok
@@ -119,6 +120,7 @@ class CheckoutController extends Controller
                     'gross_amount' => $grossAmount,
                     'payment_status' => PaymentStatus::Pending,
                     'customer_name' => $validated['customer_name'],
+                    'email' => $validated['email'],
                     'customer_phone' => $validated['customer_phone'],
                     'shipping_address' => $validated['shipping_address'],
                     'notes' => $validated['notes'] ?? null,
@@ -167,7 +169,7 @@ class CheckoutController extends Controller
                     'item_details' => $midtransItems,
                     'customer_details' => [
                         'first_name' => $validated['customer_name'],
-                        'email' => auth()->user()->email ?? 'guest@junelabel.com',
+                        'email' => $validated['email'],
                         'phone' => $validated['customer_phone'],
                         'billing_address' => [
                             'address' => $validated['shipping_address'],
@@ -195,9 +197,31 @@ class CheckoutController extends Controller
                 }
 
 
-                return redirect()->route('order.complete', ['order' => $order->order_id])
-                    ->with('success', 'Order created successfully. Please proceed to payment.');
+                return $order;
             });
+
+            // Send Emails (Customer first, then Admin after 10s delay)
+            try {
+                // 1. Customer Email - Order Confirmation
+                \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order));
+                Log::info('Order confirmation email sent to customer: ' . $order->order_id);
+            } catch (\Exception $e) {
+                Log::error('Failed to send Customer Email: ' . $e->getMessage());
+            }
+
+            // Delay 10 detik (Mailtrap Rate Limit Protection)
+            \sleep(10);
+
+            try {
+                // 2. Admin Email - New Order Alert
+                \Illuminate\Support\Facades\Mail::to('admin@junelabel.com')->send(new \App\Mail\NewOrderAlert($order));
+                Log::info('New order alert sent to admin: ' . $order->order_id);
+            } catch (\Exception $e) {
+                Log::error('Failed to send Admin Email: ' . $e->getMessage());
+            }
+
+            return redirect()->route('order.complete', ['order' => $order->order_id])
+                ->with('success', 'Order created successfully. Please proceed to payment.');
         } catch (\Exception $e) {
             Log::error('Checkout Error: ' . $e->getMessage(), [
                 'user_id' => auth()->id(),
@@ -222,5 +246,52 @@ class CheckoutController extends Controller
         return Inertia::render('Shop/OrderComplete', [
             'order' => $order
         ]);
+    }
+
+    public function cancel($orderId)
+    {
+        try {
+            $order = Order::with('orderItems')->where('order_id', $orderId)->firstOrFail();
+
+            // Security: Only owner can cancel
+            if ($order->user_id !== auth()->id()) {
+                return back()->with('error', 'Unauthorized action.');
+            }
+
+            // Only pending payment can be cancelled
+            if ($order->payment_status !== PaymentStatus::Pending) {
+                return back()->with('error', 'Only pending orders can be cancelled.');
+            }
+
+            DB::transaction(function () use ($order) {
+                // Restore product stock
+                foreach ($order->orderItems as $item) {
+                    $product = Product::find($item->product_id);
+                    if ($product) {
+                        $product->increment('stock', $item->quantity);
+                    }
+                }
+
+                // Update order status
+                $order->payment_status = PaymentStatus::Failed;
+                $order->order_status = OrderStatus::Cancelled;
+                $order->cancellation_reason = 'Cancelled by customer';
+                $order->save();
+
+                Log::info('Order cancelled by customer', [
+                    'order_id' => $order->order_id,
+                    'user_id' => auth()->id(),
+                ]);
+            });
+
+            return back()->with('success', 'Order cancelled successfully. Stock has been restored.');
+        } catch (\Exception $e) {
+            Log::error('Order cancellation error: ' . $e->getMessage(), [
+                'order_id' => $orderId,
+                'user_id' => auth()->id(),
+            ]);
+
+            return back()->with('error', 'Failed to cancel order. Please try again.');
+        }
     }
 }

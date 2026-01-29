@@ -20,9 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        // Exclude Midtrans webhook from CSRF protection
+        // Exclude Midtrans webhook & API forms from CSRF protection
         $middleware->validateCsrfTokens(except: [
             'midtrans/notification',
+            'api/newsletter/subscribe',
+            'api/contact/submit',
+            'api/cart/*', // Exclude semua route cart
+            'api/track-order',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

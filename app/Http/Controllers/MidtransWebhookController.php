@@ -86,6 +86,27 @@ class MidtransWebhookController extends Controller
                         $order->transaction_id = $notification->transaction_id;
                         $order->payment_method = $paymentType;
                         $order->paid_at = now();
+                        $order->order_status = \App\Enum\OrderStatus::Processing;
+
+                        // Send Payment Success Email (Customer first, then Admin after 10s delay)
+                        try {
+                            if ($order->email && !$order->payment_email_sent) {
+                                // 1. Customer Email
+                                \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\PaymentSuccess($order));
+                                Log::info('Payment success email sent to customer: ' . $order->order_id);
+
+                                // Delay 10 detik
+                                \sleep(10);
+
+                                // 2. Admin Email
+                                \Illuminate\Support\Facades\Mail::to('admin@junelabel.com')->send(new \App\Mail\AdminPaymentSuccess($order));
+                                Log::info('Admin payment notification sent: ' . $order->order_id);
+
+                                $order->payment_email_sent = true;
+                            }
+                        } catch (\Exception $e) {
+                            Log::error('Failed to send payment success email (Capture): ' . $e->getMessage());
+                        }
                     } else {
                         // Payment flagged as fraud
                         $order->payment_status = PaymentStatus::Failed;
@@ -98,6 +119,27 @@ class MidtransWebhookController extends Controller
                     $order->transaction_id = $notification->transaction_id;
                     $order->payment_method = $paymentType;
                     $order->paid_at = now();
+                    $order->order_status = \App\Enum\OrderStatus::Processing;
+
+                    // Send Payment Success Email (Customer first, then Admin after 10s delay)
+                    try {
+                        if ($order->email && !$order->payment_email_sent) {
+                            // 1. Customer Email
+                            \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\PaymentSuccess($order));
+                            Log::info('Payment success email sent to customer: ' . $order->order_id);
+
+                            // Delay 10 detik
+                            \sleep(10);
+
+                            // 2. Admin Email
+                            \Illuminate\Support\Facades\Mail::to('admin@junelabel.com')->send(new \App\Mail\AdminPaymentSuccess($order));
+                            Log::info('Admin payment notification sent: ' . $order->order_id);
+
+                            $order->payment_email_sent = true;
+                        }
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send payment success email: ' . $e->getMessage());
+                    }
                 } elseif ($transactionStatus == 'pending') {
                     // Payment pending
                     $order->payment_status = PaymentStatus::Pending;
@@ -164,12 +206,55 @@ class MidtransWebhookController extends Controller
                 if ($fraudStatus == 'accept') {
                     $order->payment_status = PaymentStatus::Success;
                     $order->paid_at = now();
+                    $order->order_status = \App\Enum\OrderStatus::Processing;
+
+                    // Send Payment Success Email (Customer first, then Admin after 10s delay)
+                    try {
+                        if ($order->email && !$order->payment_email_sent) {
+                            // 1. Customer Email
+                            \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\PaymentSuccess($order));
+                            Log::info('Payment success email sent to customer: ' . $order->order_id);
+
+                            // Delay 10 detik
+                            \sleep(10);
+
+                            // 2. Admin Email
+                            \Illuminate\Support\Facades\Mail::to('admin@junelabel.com')->send(new \App\Mail\AdminPaymentSuccess($order));
+                            Log::info('Admin payment notification sent: ' . $order->order_id);
+
+                            $order->payment_email_sent = true;
+                        }
+                    } catch (\Exception $e) {
+                        // Validasi manual: Log error aja, jangan return error
+                        Log::error('Failed to send payment success email (Manual Check): ' . $e->getMessage());
+                    }
                 } else {
                     $order->payment_status = PaymentStatus::Failed;
                 }
             } elseif ($transactionStatus == 'settlement') {
                 $order->payment_status = PaymentStatus::Success;
                 $order->paid_at = now();
+                $order->order_status = \App\Enum\OrderStatus::Processing;
+
+                // Send Payment Success Email (Customer first, then Admin after 10s delay)
+                try {
+                    if ($order->email && !$order->payment_email_sent) {
+                        // 1. Customer Email
+                        \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\PaymentSuccess($order));
+                        Log::info('Payment success email sent to customer: ' . $order->order_id);
+
+                        // Delay 10 detik
+                        \sleep(10);
+
+                        // 2. Admin Email
+                        \Illuminate\Support\Facades\Mail::to('admin@junelabel.com')->send(new \App\Mail\AdminPaymentSuccess($order));
+                        Log::info('Admin payment notification sent: ' . $order->order_id);
+
+                        $order->payment_email_sent = true;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Failed to send payment success email (Manual Check): ' . $e->getMessage());
+                }
             } elseif ($transactionStatus == 'pending') {
                 $order->payment_status = PaymentStatus::Pending;
             } elseif ($transactionStatus == 'deny' || $transactionStatus == 'cancel') {
