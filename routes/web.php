@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\Product;
 
@@ -47,8 +48,59 @@ Route::get('/product/{slug}', function ($slug) {
 })->name('product.detail');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
+    $user = auth()->user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    $orders = \App\Models\Order::where('user_id', $user->id)
+        ->with('orderItems')
+        ->latest()
+        ->get();
+
+    $totalOrders = $orders->count();
+    // Filter by enum values - pending and processing are considered "pending"
+    $pendingOrders = $orders->filter(function ($order) {
+        $status = $order->order_status instanceof \App\Enum\OrderStatus
+            ? $order->order_status->value
+            : $order->order_status;
+        return in_array($status, ['pending', 'processing']);
+    })->count();
+    // Delivered orders are considered "completed"
+    $completedOrders = $orders->filter(function ($order) {
+        $status = $order->order_status instanceof \App\Enum\OrderStatus
+            ? $order->order_status->value
+            : $order->order_status;
+        return $status === 'delivered';
+    })->count();
+
+    return Inertia::render('Dashboard', [
+        'orders' => $orders,
+        'stats' => [
+            'total' => $totalOrders,
+            'pending' => $pendingOrders,
+            'completed' => $completedOrders,
+        ]
+    ]);
+})->middleware('auth')->name('dashboard');
+
+Route::get('/my-orders', function () {
+    $user = auth()->user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    $orders = \App\Models\Order::where('user_id', $user->id)
+        ->with(['orderItems.product'])
+        ->latest()
+        ->get();
+
+    return Inertia::render('MyOrders', [
+        'orders' => $orders,
+    ]);
+})->middleware('auth')->name('my.orders');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -105,6 +157,7 @@ Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/order/{order}', [App\Http\Controllers\CheckoutController::class, 'complete'])->name('order.complete');
+Route::post('/order/{orderId}/cancel', [App\Http\Controllers\CheckoutController::class, 'cancel'])->middleware('auth')->name('order.cancel');
 
 // Shipping / RajaOngkir API Routes
 Route::prefix('api/shipping')->group(function () {

@@ -23,6 +23,7 @@ export default function Checkout() {
 
   const { data, setData, post, processing, errors } = useForm({
     customer_name: '',
+    email: '',
     customer_phone: '',
     shipping_address: '',
     notes: '',
@@ -256,6 +257,22 @@ export default function Checkout() {
                   {errors.customer_name && (
                     <p className="text-red-500 text-xs mt-1">{errors.customer_name}</p>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={data.email}
+                    onChange={(e) => setData('email', e.target.value)}
+                    className="w-full bg-[#f9f9f9] border border-gray-200 focus:border-[#7C634D] focus:ring-0 text-[#7C634D] px-4 py-3 text-sm transition-colors"
+                    placeholder="Enter your email"
+                    required
+                    aria-required="true"
+                  />
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
 
                 <div>

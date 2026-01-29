@@ -15,61 +15,19 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'category_id', 'sku', 'name', 'slug', 'image', 'gallery',
-        'description', 'price', 'stock', 'weight', 'is_active', 'is_best_seller'
+        'category_id',
+        'sku',
+        'name',
+        'slug',
+        'image',
+        'gallery',
+        'description',
+        'price',
+        'stock',
+        'weight',
+        'is_active',
+        'is_best_seller'
     ];
-
-    /**
-     * LOGIKA OTOMATIS: Convert Image & Gallery ke WebP
-     */
-    protected static function booted(): void
-    {
-        static::saving(function (Product $product) {
-            $disk = Storage::disk('public');
-
-            // --- BAGIAN 1: PROSES IMAGE UTAMA (Sama kayak tadi) ---
-            if ($product->isDirty('image') && $product->image) {
-                $originalPath = $product->image;
-                if ($disk->exists($originalPath)) {
-                    $newPath = preg_replace('/\.[^.]+$/', '.webp', $originalPath);
-                    $image = Image::read($disk->path($originalPath));
-                    $image->scaleDown(width: 1000); 
-                    $image->toWebp(quality: 75)->save($disk->path($newPath));
-                    $product->image = $newPath;
-                    if ($originalPath !== $newPath) $disk->delete($originalPath);
-                }
-            }
-
-            // --- BAGIAN 2: PROSES GALLERY (Looping banyak foto) ---
-            if ($product->isDirty('gallery') && is_array($product->gallery)) {
-                $newGallery = [];
-                
-                foreach ($product->gallery as $item) {
-                    // Kalau item sudah .webp (file lama), biarkan
-                    if (str_ends_with($item, '.webp')) {
-                        $newGallery[] = $item;
-                        continue;
-                    }
-
-                    if ($disk->exists($item)) {
-                        $newPath = preg_replace('/\.[^.]+$/', '.webp', $item);
-                        $img = Image::read($disk->path($item));
-                        $img->scaleDown(width: 1000); // Resize
-                        $img->toWebp(quality: 75)->save($disk->path($newPath));
-                        
-                        $newGallery[] = $newPath;
-                        
-                        // Hapus file asli
-                        if ($item !== $newPath) $disk->delete($item);
-                    } else {
-                        $newGallery[] = $item; // Jaga-jaga kalau file ga ketemu
-                    }
-                }
-                // Simpan array gallery yang sudah jadi WebP semua
-                $product->gallery = $newGallery;
-            }
-        });
-    }
 
     protected $casts = [
         'price' => 'decimal:2',
@@ -78,10 +36,70 @@ class Product extends Model
         'gallery' => 'array',
     ];
 
-    // Relationships
+    protected $appends = ['image_url'];
+
+    /**
+     * Otomatis convert semua gambar ke WebP saat upload
+     * - Image utama: resize max 1000px, quality 75%
+     * - Gallery: loop semua foto, convert ke WebP
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Product $product) {
+            $disk = Storage::disk('public');
+
+            // Proses image utama
+            if ($product->isDirty('image') && $product->image) {
+                $originalPath = $product->image;
+                if ($disk->exists($originalPath)) {
+                    $newPath = preg_replace('/\.[^.]+$/', '.webp', $originalPath);
+                    $image = Image::read($disk->path($originalPath));
+                    $image->scaleDown(width: 1000);
+                    $image->toWebp(quality: 75)->save($disk->path($newPath));
+                    $product->image = $newPath;
+                    if ($originalPath !== $newPath) $disk->delete($originalPath);
+                }
+            }
+
+            // Proses gallery (loop banyak foto)
+            if ($product->isDirty('gallery') && is_array($product->gallery)) {
+                $newGallery = [];
+
+                foreach ($product->gallery as $item) {
+                    // Skip jika sudah .webp
+                    if (str_ends_with($item, '.webp')) {
+                        $newGallery[] = $item;
+                        continue;
+                    }
+
+                    if ($disk->exists($item)) {
+                        $newPath = preg_replace('/\.[^.]+$/', '.webp', $item);
+                        $img = Image::read($disk->path($item));
+                        $img->scaleDown(width: 1000);
+                        $img->toWebp(quality: 75)->save($disk->path($newPath));
+                        $newGallery[] = $newPath;
+                        if ($item !== $newPath) $disk->delete($item);
+                    } else {
+                        $newGallery[] = $item;
+                    }
+                }
+                $product->gallery = $newGallery;
+            }
+        });
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /** Generate URL lengkap untuk image */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+        return Storage::disk('public')->url($this->image);
     }
 
     public function orderItems(): HasMany
@@ -89,7 +107,7 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    // Security: Prevent force delete if has order history
+    /** Cegah hapus permanen jika produk pernah dipesan */
     public function forceDelete()
     {
         if ($this->orderItems()->exists()) {
@@ -98,7 +116,7 @@ class Product extends Model
                 422
             );
         }
-        
+
         return parent::forceDelete();
     }
 }

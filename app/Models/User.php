@@ -11,20 +11,10 @@ use Filament\Panel;
 
 use Laravel\Sanctum\HasApiTokens;
 
-/**
- * @method static \Illuminate\Database\Eloquent\Builder|User create(array $attributes)
- * @method static \Illuminate\Database\Eloquent\Builder|User find($id)
- * @method static \Illuminate\Database\Eloquent\Builder|User where($column, $operator = null, $value = null)
- */
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -34,21 +24,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'email_verified_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -65,5 +45,23 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->isAdmin();
+    }
+
+    /**
+     * Override default email verification notification
+     * Uses custom template: resources/views/emails/verify-email.blade.php
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\VerifyEmailNotification);
+    }
+
+    /**
+     * Override default password reset notification
+     * Uses custom template: resources/views/emails/reset-password.blade.php
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
     }
 }

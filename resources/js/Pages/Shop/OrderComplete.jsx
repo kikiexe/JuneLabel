@@ -88,7 +88,7 @@ export default function OrderComplete({ order }) {
                 onClick={checkPaymentStatus}
                 className="w-full border border-[#7C634D] text-[#7C634D] py-3 font-bold text-sm tracking-widest uppercase hover:bg-[#7C634D]/10 transition-colors flex items-center justify-center gap-2"
               >
-                🔄 Check Payment Status
+                Check Payment Status
               </button>
             )}
             {/* Midtrans Payment Button */}
@@ -119,7 +119,7 @@ export default function OrderComplete({ order }) {
                 }}
                 className="w-full bg-[#7C634D] text-white py-3 font-bold text-sm tracking-widest uppercase hover:bg-[#5A4935] transition-colors flex items-center justify-center gap-2"
               >
-                💳 Pay Now
+                Pay Now
               </button>
             )}
 
