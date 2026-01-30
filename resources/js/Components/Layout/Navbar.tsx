@@ -60,7 +60,7 @@ export default function Navbar() {
     if (searchQuery.trim()) {
       // Encode search query untuk handle special characters
       const encodedQuery = encodeURIComponent(searchQuery.trim());
-      router.visit(route('shop.index', { search: encodedQuery }));
+      router.visit(route('collections.all', { search: encodedQuery }));
       setSearchOpen(false);
     }
   };
@@ -93,40 +93,40 @@ export default function Navbar() {
       <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
 
       <nav
-        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-[999] transition-all duration-300 ${
           isScrolled ? 'shadow-sm' : ''
         }`}
         style={{
-          backgroundColor: isScrolled ? '#FFF6EC' : 'transparent',
+          backgroundColor: '#FFF6EC',
           color: '#7C634D',
         }}
       >
         <div className="w-full flex items-center justify-between relative">
           <div className="hidden xl:flex items-center gap-10 flex-1">
-            <NavbarLink href={route('shop.index', { sort: 'latest' })}>NEW ARRIVAL</NavbarLink>
-            <NavbarLink href={route('shop.index', { sort: 'price_desc' })}>BEST SELLER</NavbarLink>
+            <NavbarLink href={route('collections.new-arrival')}>NEW ARRIVAL</NavbarLink>
+            <NavbarLink href={route('collections.best-seller')}>BEST SELLER</NavbarLink>
 
-            <div className="group relative">
-              <div className="py-4">
-                <NavbarLink
-                  href={route('shop.index', {}) /* empty params */}
-                  className="group-hover:text-[#7C634D]"
-                >
-                  COLLECTIONS
-                </NavbarLink>
-              </div>
+            <div className="group relative h-full flex items-center cursor-pointer">
+              <span className="text-sm font-medium text-[#7C634D] group-hover:text-[#7C634D] relative py-4">
+                COLLECTIONS
+                <span className="absolute bottom-2.5 left-0 w-full h-[2px] bg-[#7C634D] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out hidden xl:block"></span>
+              </span>
 
-              <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
+              <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-[100]">
                 <div className="flex flex-col py-4 px-6 space-y-4">
-                  {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href={route('shop.index', { category: category.slug })}
-                      className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
+                  {categories.length > 0 ? (
+                    categories.map((category) => (
+                      <Link
+                        key={category.id}
+                        href={route('collections.detail', category.slug)}
+                        className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
+                      >
+                        {category.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-white/70 text-sm italic">Loading categories...</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -228,13 +228,13 @@ export default function Navbar() {
             <div className="flex-1 overflow-y-auto py-4">
               <div className="flex flex-col">
                 <Link
-                  href={route('shop.index', { sort: 'latest' })}
+                  href={route('collections.all', { sort: 'latest' })}
                   className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                 >
                   New Arrival
                 </Link>
                 <Link
-                  href={route('shop.index', { sort: 'price_desc' })}
+                  href={route('collections.all', { sort: 'price_desc' })}
                   className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                 >
                   Best Seller
@@ -253,10 +253,16 @@ export default function Navbar() {
                   }`}
                 >
                   <div className="flex flex-col py-2">
+                    <Link
+                      href={route('collections.index')}
+                      className="pl-10 pr-6 py-3 text-sm font-bold text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
+                    >
+                      All Collections
+                    </Link>
                     {categories.map((category) => (
                       <Link
                         key={category.id}
-                        href={route('shop.index', { category: category.slug })}
+                        href={route('collections.all', { category: category.slug })}
                         className="pl-10 pr-6 py-3 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
                       >
                         {category.name}

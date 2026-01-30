@@ -86,17 +86,17 @@ export default function BestSellerSection({ products }: Props) {
         </div>
 
         <div className="text-center">
-          <button
-            onClick={handleDevFeature}
-            className="group relative px-8 py-2 md:px-10 md:py-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300"
+          <Link
+            href={route('collections.best-seller')}
+            className="inline-block group relative px-8 py-2 md:px-10 md:py-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300"
             style={{ borderRadius: '0px' }}
           >
             <span className="absolute inset-0 w-full h-full bg-[#FFFFFF] transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
 
             <span className="relative z-10 text-[#FFFFFF] transition-colors duration-500 group-hover:text-[#7C634D]">
-              View All Products
+              View All Best Sellers
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>
