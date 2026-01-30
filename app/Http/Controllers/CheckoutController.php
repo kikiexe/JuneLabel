@@ -30,7 +30,7 @@ class CheckoutController extends Controller
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.quantity' => 'required|integer|min:1|max:10',
             // Shipping information
             'shipping_courier' => 'nullable|string|max:100',
             'shipping_service' => 'required_with:shipping_courier|string|max:100',
@@ -134,12 +134,6 @@ class CheckoutController extends Controller
                     $order->orderItems()->create($data);
                 }
 
-                // Generate Midtrans Snap Token
-                \Midtrans\Config::$serverKey = config('midtrans.server_key');
-                \Midtrans\Config::$isProduction = config('midtrans.is_production');
-                \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
-                \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
-
                 // Prepare items for Midtrans
                 $midtransItems = [];
                 foreach ($orderItemsData as $item) {
@@ -183,8 +177,10 @@ class CheckoutController extends Controller
                     ],
                 ];
 
+                // Generate Midtrans Snap Token via Service
                 try {
-                    $snapToken = \Midtrans\Snap::getSnapToken($midtransParams);
+                    $midtransService = app(\App\Services\MidtransService::class);
+                    $snapToken = $midtransService->getSnapToken($midtransParams);
                     $order->snap_token = $snapToken;
                     $order->save();
                 } catch (\Exception $e) {

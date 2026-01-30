@@ -4,6 +4,7 @@ import GuestLayout from '@/Components/Layout/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState, FormEvent } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { useCart } from '@/Contexts/CartContext';
 
 interface LoginProps {
   status?: string;
@@ -11,6 +12,7 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword }: LoginProps) {
+  const { refreshCart } = useCart();
   const { data, setData, post, processing, errors, reset } = useForm({
     email: '',
     password: '',
@@ -22,6 +24,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     post(route('login'), {
+      onSuccess: () => {
+        refreshCart();
+      },
       onFinish: () => reset('password'),
     });
   };

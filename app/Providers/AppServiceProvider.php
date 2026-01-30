@@ -30,5 +30,11 @@ class AppServiceProvider extends ServiceProvider
         // Register observers untuk auto-clear cache
         \App\Models\Product::observe(\App\Observers\ProductObserver::class);
         \App\Models\Category::observe(\App\Observers\CategoryObserver::class);
+
+        // Register event listener untuk merge guest cart saat login
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            \App\Listeners\MergeGuestCart::class,
+        );
     }
 }
