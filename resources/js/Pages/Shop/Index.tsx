@@ -476,6 +476,7 @@ export default function ShopIndex({
                           src={`/storage/${product.image}`}
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          loading="lazy"
                         />
                         {/* Badge Overlay can go here (e.g. Sale, New) */}
                         {!product.is_active && (
@@ -540,7 +541,7 @@ export default function ShopIndex({
                   Try adjusting your search or filters to find what you're looking for.
                 </p>
                 <button
-                  onClick={() => router.get(route('collections.all'))}
+                  onClick={() => router.get(route('collections.index'))}
                   className="bg-[#7C634D] text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-[#65503D] transition-colors"
                 >
                   View All Products

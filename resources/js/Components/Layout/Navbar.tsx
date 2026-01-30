@@ -17,9 +17,12 @@ import { useCart } from '@/Contexts/CartContext';
 import Cookies from 'js-cookie';
 import { CONTACT_INFO } from '@/Constants/contact';
 import { Category } from '@/types';
+import CartSidebar from '@/Components/Cart/CartSidebar';
 
 export default function Navbar() {
-  const { getCartCount } = useCart();
+  const { getCartCount, openCart } = useCart();
+  // ... existing code ...
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -93,7 +96,7 @@ export default function Navbar() {
       <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
 
       <nav
-        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-[999] transition-all duration-300 ${
+        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-[999] transition-all duration-300 border-b border-[#7C634D]/20 ${
           isScrolled ? 'shadow-sm' : ''
         }`}
         style={{
@@ -106,27 +109,69 @@ export default function Navbar() {
             <NavbarLink href={route('collections.new-arrival')}>NEW ARRIVAL</NavbarLink>
             <NavbarLink href={route('collections.best-seller')}>BEST SELLER</NavbarLink>
 
-            <div className="group relative h-full flex items-center cursor-pointer">
-              <span className="text-sm font-medium text-[#7C634D] group-hover:text-[#7C634D] relative py-4">
-                COLLECTIONS
+            <div className="group static h-full flex items-center cursor-pointer">
+              <div className="relative py-4">
+                <span className="text-sm font-medium text-[#7C634D] group-hover:text-[#7C634D]">
+                  COLLECTIONS
+                </span>
                 <span className="absolute bottom-2.5 left-0 w-full h-[2px] bg-[#7C634D] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out hidden xl:block"></span>
-              </span>
+              </div>
 
-              <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-[100]">
-                <div className="flex flex-col py-4 px-6 space-y-4">
-                  {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={route('collections.detail', category.slug)}
-                        className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
-                      >
-                        {category.name}
-                      </Link>
-                    ))
-                  ) : (
-                    <span className="text-white/70 text-sm italic">Loading categories...</span>
-                  )}
+              <div className="absolute top-full left-0 w-full bg-[#FFF6EC] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-[100] border-y border-[#7C634D]/10 mt-1">
+                <div className="w-full px-6 xl:px-16 py-8">
+                  <div className="flex justify-start gap-32">
+                    {/* Pashmina Column */}
+                    <div className="flex flex-col gap-4 text-left">
+                      <h3 className="text-[#7C634D] font-serif font-bold text-lg tracking-widest uppercase border-b border-[#7C634D]/20 pb-2 mb-2 w-48">
+                        Pashmina
+                      </h3>
+                      <div className="flex flex-col gap-2">
+                        {categories
+                          .filter((c) => c.name.toLowerCase().includes('pashmina'))
+                          .map((category) => (
+                            <Link
+                              key={category.id}
+                              href={route('collections.detail', category.slug)}
+                              className="text-[#7C634D]/80 hover:text-[#7C634D] hover:translate-x-1 transition-all duration-300 text-sm font-light"
+                            >
+                              {category.name}
+                            </Link>
+                          ))}
+                        {categories.filter((c) => c.name.toLowerCase().includes('pashmina'))
+                          .length === 0 && (
+                          <span className="text-[#7C634D]/40 text-xs italic">
+                            No pashmina collections
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Paris Column */}
+                    <div className="flex flex-col gap-4 text-left">
+                      <h3 className="text-[#7C634D] font-serif font-bold text-lg tracking-widest uppercase border-b border-[#7C634D]/20 pb-2 mb-2 w-48">
+                        Paris
+                      </h3>
+                      <div className="flex flex-col gap-2">
+                        {categories
+                          .filter((c) => c.name.toLowerCase().includes('paris'))
+                          .map((category) => (
+                            <Link
+                              key={category.id}
+                              href={route('collections.detail', category.slug)}
+                              className="text-[#7C634D]/80 hover:text-[#7C634D] hover:translate-x-1 transition-all duration-300 text-sm font-light"
+                            >
+                              {category.name}
+                            </Link>
+                          ))}
+                        {categories.filter((c) => c.name.toLowerCase().includes('paris')).length ===
+                          0 && (
+                          <span className="text-[#7C634D]/40 text-xs italic">
+                            No paris collections
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -161,14 +206,14 @@ export default function Navbar() {
               <Search size={20} color="#7C634D" strokeWidth={2} />
             </button>
 
-            <Link href="/cart" className="hover:opacity-70 transition-opacity relative">
+            <button onClick={openCart} className="hover:opacity-70 transition-opacity relative">
               <ShoppingBag size={20} color="#7C634D" strokeWidth={2} />
               {getCartCount() > 0 && (
                 <span className="absolute -top-2 -right-2 bg-[#7C634D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                   {getCartCount()}
                 </span>
               )}
-            </Link>
+            </button>
 
             <Link
               href={Cookies.get('token') ? '/dashboard' : '/login'}
@@ -319,6 +364,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+      <CartSidebar />
     </>
   );
 }

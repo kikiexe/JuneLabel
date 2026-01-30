@@ -21,7 +21,7 @@ export default function Collections({ categories }: Props) {
       <SeoHead title="Collections" description="Browse all our collections." />
       <Navbar />
 
-      <div className="bg-[#FFF6EC] pt-28 pb-12 px-4 text-center">
+      <div className="pt-28 pb-12 px-4 text-center">
         <h1 className="text-3xl md:text-4xl font-serif font-bold uppercase tracking-widest mb-4">
           Our Collections
         </h1>
