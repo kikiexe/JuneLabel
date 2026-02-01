@@ -39,18 +39,26 @@ Route::get('/', function () {
 
 Route::get('/product/{slug}', function ($slug) {
     // Fix N+1: Eager load category
-    $product = Product::with('category')
-        ->where('slug', $slug)
-        ->where('is_active', true)
-        ->firstOrFail();
+    // Fix N+1: Eager load category
+    $product = Cache::remember('product.detail.' . $slug, 1800, function () use ($slug) {
+        return Product::with('category')
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+    });
 
     // Fix N+1: Eager load category
-    $relatedProducts = Product::with('category')
-        ->where('id', '!=', $product->id)
-        ->where('is_active', true)
-        ->inRandomOrder()
-        ->take(4)
-        ->get();
+    // Related products don't strictly need to be cached with the main product as they might be random,
+    // but caching them is good for performance. However, random order makes caching less effective if we want randomness.
+    // Let's cache them for a short time or bound to the product.
+    $relatedProducts = Cache::remember('product.related.' . $product->id, 1800, function () use ($product) {
+        return Product::with('category')
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+    });
 
     return Inertia::render('Products/Products', [
         'product' => $product,
@@ -65,10 +73,12 @@ Route::get('/dashboard', function () {
         return redirect()->route('login');
     }
 
-    $orders = \App\Models\Order::where('user_id', $user->id)
-        ->with('orderItems')
-        ->latest()
-        ->get();
+    $orders = Cache::remember('user.orders.' . $user->id, 300, function () use ($user) {
+        return \App\Models\Order::where('user_id', $user->id)
+            ->with('orderItems')
+            ->latest()
+            ->get();
+    });
 
     $totalOrders = $orders->count();
     // Filter by enum values - pending and processing are considered "pending"

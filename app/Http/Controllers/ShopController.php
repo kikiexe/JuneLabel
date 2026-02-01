@@ -78,15 +78,15 @@ class ShopController extends Controller
 
         // 6. Pagination
         $products = $query->with('category')->paginate(12)->withQueryString();
-        
+
         $facetQuery = Product::query()->where('is_active', true);
         if ($request->has('search')) {
-             $facetQuery->where('name', 'like', '%' . $request->search . '%');
+            $facetQuery->where('name', 'like', '%' . $request->search . '%');
         }
         if ($request->has('category')) {
-             $facetQuery->whereHas('category', function ($q) use ($request) {
+            $facetQuery->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
-             });
+            });
         }
 
         $inStockCount = (clone $facetQuery)->where('stock', '>', 0)->count();
@@ -122,19 +122,21 @@ class ShopController extends Controller
 
     public function collections()
     {
-        $categories = Category::has('products')
-            ->with('latestProduct')
-            ->withCount('products')
-            ->get()
-            ->map(function ($category) {
-                return [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                    'slug' => $category->slug,
-                    'image' => $category->latestProduct?->image,
-                    'product_count' => $category->products_count, // Updated to use the count attribute
-                ];
-            });
+        $categories = \Illuminate\Support\Facades\Cache::remember('shop.collections', 86400, function () {
+            return Category::has('products')
+                ->with('latestProduct')
+                ->withCount('products')
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                        'slug' => $category->slug,
+                        'image' => $category->latestProduct?->image,
+                        'product_count' => $category->products_count, // Updated to use the count attribute
+                    ];
+                });
+        });
 
         return Inertia::render('Shop/Collections', [
             'categories' => $categories
