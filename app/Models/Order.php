@@ -84,7 +84,7 @@ class Order extends Model
 
                 // Log audit trail
                 Log::info("Order Payment Status Changed", [
-                    'order_id' => $order->id,
+                    'id' => $order->id,
                     'order_id' => $order->order_id,
                     'from' => $order->getOriginal('payment_status'),
                     'to' => $newStatus,
@@ -105,7 +105,7 @@ class Order extends Model
                     : $order->order_status;
 
                 Log::info("Order Status Changed", [
-                    'order_id' => $order->id,
+                    'id' => $order->id,
                     'order_id' => $order->order_id,
                     'from' => $order->getOriginal('order_status'),
                     'to' => $newStatus,

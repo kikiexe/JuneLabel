@@ -49,6 +49,8 @@ export default function NewArrivalSection({ products }: Props) {
                     <img
                       src={`/storage/${product.image}`}
                       alt={product.name}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-100 group-hover:opacity-0"
                       style={commonImgStyle}
                     />
@@ -56,6 +58,8 @@ export default function NewArrivalSection({ products }: Props) {
                     <img
                       src={`/storage/${hoverImage}`}
                       alt={`${product.name} Hover`}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0 group-hover:opacity-100"
                       style={commonImgStyle}
                     />

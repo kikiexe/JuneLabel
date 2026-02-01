@@ -112,6 +112,19 @@ return [
     |
     */
 
-    'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-cache-'),
+    'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')) . '-cache-'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache TTL (Time To Live)
+    |--------------------------------------------------------------------------
+    |
+    | Default TTL values in seconds for various cache keys.
+    |
+    */
+
+    'ttl' => [
+        'homepage' => 3600,
+    ],
 
 ];

@@ -313,6 +313,8 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                         <img
                           src={`/storage/${product.image}`}
                           alt={product.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         {/* Badge Overlay can go here (e.g. Sale, New) */}

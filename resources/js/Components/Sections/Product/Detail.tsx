@@ -73,6 +73,7 @@ export default function DetailSection({ product }: Props) {
                     src={`/storage/${img}`}
                     alt={`${product.name} - Image ${index + 1} of ${allImages.length}`}
                     loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
                     className="w-full h-auto object-cover"
                   />
                 </div>

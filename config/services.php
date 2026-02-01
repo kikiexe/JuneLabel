@@ -38,6 +38,8 @@ return [
     'rajaongkir' => [
         'api_key' => env('RAJAONGKIR_API_KEY'),
         'origin_district_id' => env('RAJAONGKIR_ORIGIN_DISTRICT_ID', '1342'), // Default: Johor Baru
+        'default_couriers' => 'jne:sicepat:jnt:anteraja:ninja:pos:tiki:lion',
+        'max_cost_threshold' => 100000,
         'urls' => [
             'province' => env('BASE_URL_PROVINCE', 'https://rajaongkir.komerce.id/api/v1/destination/province'),
             'city' => env('BASE_URL_SEARCH_CITY', 'https://rajaongkir.komerce.id/api/v1/destination/city/{province_id}'),

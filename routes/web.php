@@ -10,7 +10,7 @@ use App\Models\Product;
 
 Route::get('/', function () {
     // Cache new arrivals selama 1 jam (3600 detik)
-    $newArrivals = Cache::remember('homepage.new_arrivals', 3600, function () {
+    $newArrivals = Cache::remember('homepage.new_arrivals', config('cache.ttl.homepage', 3600), function () {
         return Product::with('category')
             ->where('is_active', true)
             ->latest()
@@ -19,7 +19,7 @@ Route::get('/', function () {
     });
 
     // Cache best sellers selama 1 jam
-    $bestSellers = Cache::remember('homepage.best_sellers', 3600, function () {
+    $bestSellers = Cache::remember('homepage.best_sellers', config('cache.ttl.homepage', 3600), function () {
         return Product::with('category')
             ->where('is_active', true)
             ->where('is_best_seller', true)
