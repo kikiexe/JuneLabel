@@ -165,7 +165,11 @@ Route::get('/cart', function () {
     return Inertia::render('Shop/Cart');
 })->name('cart');
 
-Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
+Route::get('/collections', [App\Http\Controllers\ShopController::class, 'collections'])->name('collections.index');
+Route::get('/collections/new-arrival', [App\Http\Controllers\ShopController::class, 'newArrivals'])->name('collections.new-arrival');
+Route::get('/collections/best-seller', [App\Http\Controllers\ShopController::class, 'bestSellers'])->name('collections.best-seller');
+Route::get('/collections/{slug}', [App\Http\Controllers\ShopController::class, 'collectionDetail'])->name('collections.detail');
+Route::get('/collections/all', [App\Http\Controllers\ShopController::class, 'index'])->name('collections.all');
 
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 

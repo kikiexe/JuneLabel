@@ -18,4 +18,9 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function latestProduct()
+    {
+        return $this->hasOne(Product::class)->latestOfMany();
+    }
 }

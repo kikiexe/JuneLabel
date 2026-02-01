@@ -25,6 +25,10 @@ interface CartContextProps {
   getCartTotal: () => number;
   getCartCount: () => number;
   refreshCart: () => Promise<void>;
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
+  setIsCartOpen: (isOpen: boolean) => void;
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
@@ -42,6 +46,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -85,8 +93,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (response.data.success) {
-        showNotification('Produk berhasil ditambahkan!');
-        await fetchCart();
+        showNotification('Berhasil ditambahkan ke keranjang!');
+        await fetchCart(); // Refresh cart from server
+        openCart(); // Auto open cart on add
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -172,6 +181,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         getCartTotal,
         getCartCount,
         refreshCart: fetchCart,
+        isCartOpen,
+        openCart,
+        closeCart,
+        setIsCartOpen,
       }}
     >
       {children}

@@ -14,8 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Cache::remember('categories.all', 86400, function () {
-            return Category::has('products')
-                ->select('id', 'name', 'slug')
+            return Category::select('id', 'name', 'slug')
                 ->orderBy('name')
                 ->get();
         });
