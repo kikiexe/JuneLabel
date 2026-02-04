@@ -96,11 +96,11 @@ export default function Navbar() {
       <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
 
       <nav
-        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-[999] transition-all duration-300 border-b border-[#7C634D]/20 ${
-          isScrolled ? 'shadow-sm' : ''
+        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-[999] transition-all duration-300 ${
+          isScrolled ? 'shadow-sm border-b border-[#7C634D]/20' : 'border-b border-transparent'
         }`}
         style={{
-          backgroundColor: '#FFF6EC',
+          backgroundColor: isScrolled ? '#FFF6EC' : '#FFFFFF',
           color: '#7C634D',
         }}
       >
@@ -117,61 +117,58 @@ export default function Navbar() {
                 <span className="absolute bottom-2.5 left-0 w-full h-[2px] bg-[#7C634D] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out hidden xl:block"></span>
               </div>
 
-              <div className="absolute top-full left-0 w-full bg-[#FFF6EC] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-[100] border-y border-[#7C634D]/10 mt-1">
+              <div
+                className="absolute top-full left-0 w-full shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-[100] border-y border-[#7C634D]/10 mt-1"
+                style={{ backgroundColor: isScrolled ? '#FFF6EC' : '#FFFFFF' }}
+              >
                 <div className="w-full px-6 xl:px-16 py-8">
                   <div className="flex justify-start gap-32">
-                    {/* Pashmina Column */}
-                    <div className="flex flex-col gap-4 text-left">
-                      <h3 className="text-[#7C634D] font-serif font-bold text-lg tracking-widest uppercase border-b border-[#7C634D]/20 pb-2 mb-2 w-48">
-                        Pashmina
-                      </h3>
-                      <div className="flex flex-col gap-2">
-                        {categories
-                          .filter((c) => c.name.toLowerCase().includes('pashmina'))
-                          .map((category) => (
-                            <Link
-                              key={category.id}
-                              href={route('collections.detail', category.slug)}
-                              className="text-[#7C634D]/80 hover:text-[#7C634D] hover:translate-x-1 transition-all duration-300 text-sm font-light"
-                            >
-                              {category.name}
-                            </Link>
-                          ))}
-                        {categories.filter((c) => c.name.toLowerCase().includes('pashmina'))
-                          .length === 0 && (
-                          <span className="text-[#7C634D]/40 text-xs italic">
-                            No pashmina collections
-                          </span>
-                        )}
+                    {/* Dynamic Category Columns */}
+                    {categories.map((parentCategory) => (
+                      <div key={parentCategory.id} className="flex flex-col gap-4 text-left">
+                        <h3 className="text-[#7C634D] font-serif font-bold text-lg tracking-widest uppercase border-b border-[#7C634D]/20 pb-2 mb-2 w-48">
+                          {parentCategory.name}
+                        </h3>
+                        <div className="flex flex-col gap-2">
+                          {parentCategory.children && parentCategory.children.length > 0 ? (
+                            parentCategory.children.map((child) => (
+                              <Link
+                                key={child.id}
+                                href={route('collections.detail', child.slug)}
+                                className="text-[#7C634D]/80 hover:text-[#7C634D] hover:translate-x-1 transition-all duration-300 text-sm font-light"
+                              >
+                                {child.name}
+                              </Link>
+                            ))
+                          ) : (
+                            <span className="text-[#7C634D]/40 text-xs italic">
+                              No subcategories
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Paris Column */}
-                    <div className="flex flex-col gap-4 text-left">
-                      <h3 className="text-[#7C634D] font-serif font-bold text-lg tracking-widest uppercase border-b border-[#7C634D]/20 pb-2 mb-2 w-48">
-                        Paris
-                      </h3>
-                      <div className="flex flex-col gap-2">
-                        {categories
-                          .filter((c) => c.name.toLowerCase().includes('paris'))
-                          .map((category) => (
-                            <Link
-                              key={category.id}
-                              href={route('collections.detail', category.slug)}
-                              className="text-[#7C634D]/80 hover:text-[#7C634D] hover:translate-x-1 transition-all duration-300 text-sm font-light"
-                            >
-                              {category.name}
-                            </Link>
-                          ))}
-                        {categories.filter((c) => c.name.toLowerCase().includes('paris')).length ===
-                          0 && (
-                          <span className="text-[#7C634D]/40 text-xs italic">
-                            No paris collections
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                    ))}
+                    {categories.length === 0 && (
+                      <span className="text-[#7C634D]/40 text-sm italic">
+                        Loading collections...
+                      </span>
+                    )}
                   </div>
+                  {/* Close Button */}
+                  <button
+                    className="absolute top-4 right-6 text-[#7C634D]/60 hover:text-[#7C634D] transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Force close by removing hover state
+                      const dropdown = e.currentTarget.closest('.group');
+                      if (dropdown) {
+                        dropdown.classList.remove('group');
+                        setTimeout(() => dropdown.classList.add('group'), 100);
+                      }
+                    }}
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -294,7 +291,7 @@ export default function Navbar() {
 
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#F8F1EB] ${
-                    collectionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    collectionsOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
                   <div className="flex flex-col py-2">
@@ -304,14 +301,25 @@ export default function Navbar() {
                     >
                       All Collections
                     </Link>
-                    {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={route('collections.all', { category: category.slug })}
-                        className="pl-10 pr-6 py-3 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
-                      >
-                        {category.name}
-                      </Link>
+                    {categories.map((parentCategory) => (
+                      <div key={parentCategory.id}>
+                        {/* Parent Category Header */}
+                        <div className="pl-10 pr-6 py-2 text-xs font-semibold text-[#7C634D]/60 uppercase tracking-wider mt-2">
+                          {parentCategory.name}
+                        </div>
+                        {/* Child Categories */}
+                        {parentCategory.children &&
+                          parentCategory.children.map((child) => (
+                            <Link
+                              key={child.id}
+                              href={route('collections.detail', child.slug)}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="pl-14 pr-6 py-2 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left block"
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                      </div>
                     ))}
                   </div>
                 </div>

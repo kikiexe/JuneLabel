@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
@@ -13,23 +14,41 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        // Struktur kategori: Parent => [Subkategori]
         $categories = [
-            'Pashmina Tencel',
-            'Pashmina Viscose Rayon',
-            'Paris Japan Ori',
-            'Paris Jadul Premium',
-            'Pashmina Inner Tencel',
+            'Pashmina Series' => [
+                'Pashmina Tencel',
+                'Pashmina Oval Tencel',
+            ],
+            'Paris Series' => [
+                'Paris Japan',
+                'Paris June Scarves',
+            ],
+            'Other' => [
+                'Hijab Printing',
+            ],
         ];
 
-        foreach ($categories as $categoryName) {
-            DB::table('categories')->updateOrInsert(
-                ['slug' => Str::slug($categoryName)], // Cek berdasarkan slug agar tidak duplikat
+        foreach ($categories as $parentName => $children) {
+            // Buat atau update parent category
+            $parent = Category::updateOrCreate(
+                ['slug' => Str::slug($parentName)],
                 [
-                    'name' => $categoryName,
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'name' => $parentName,
+                    'parent_id' => null,
                 ]
             );
+
+            // Buat subkategori
+            foreach ($children as $childName) {
+                Category::updateOrCreate(
+                    ['slug' => Str::slug($childName)],
+                    [
+                        'name' => $childName,
+                        'parent_id' => $parent->id,
+                    ]
+                );
+            }
         }
     }
 }

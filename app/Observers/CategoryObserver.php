@@ -15,8 +15,7 @@ class CategoryObserver
      */
     public function created(Category $category): void
     {
-        Cache::forget('categories.all');
-        Cache::forget('shop.collections');
+        $this->clearCategoryCache();
     }
 
     /**
@@ -24,8 +23,7 @@ class CategoryObserver
      */
     public function updated(Category $category): void
     {
-        Cache::forget('categories.all');
-        Cache::forget('shop.collections');
+        $this->clearCategoryCache();
     }
 
     /**
@@ -33,7 +31,16 @@ class CategoryObserver
      */
     public function deleted(Category $category): void
     {
+        $this->clearCategoryCache();
+    }
+
+    /**
+     * Clear all category-related caches
+     */
+    private function clearCategoryCache(): void
+    {
         Cache::forget('categories.all');
+        Cache::forget('categories.with_children');
         Cache::forget('shop.collections');
     }
 }
