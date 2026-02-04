@@ -113,7 +113,7 @@ class RajaOngkirService
         try {
             // Default couriers: Popular & reliable for e-commerce parcel delivery
             if (!$courier) {
-                $courier = 'jne:sicepat:jnt:anteraja:ninja:pos:tiki:lion';
+                $courier = config('services.rajaongkir.default_couriers', 'jne:sicepat:jnt:anteraja:ninja:pos:tiki:lion');
             }
 
             $response = Http::withHeaders([
@@ -189,7 +189,7 @@ class RajaOngkirService
 
         // Max cost threshold untuk paket normal (dalam Rupiah)
         // Jika > threshold ini untuk 1kg, kemungkinan besar bukan paket biasa
-        $maxCostThreshold = 100000; // Rp 100.000 per kg
+        $maxCostThreshold = config('services.rajaongkir.max_cost_threshold', 100000); // Rp 100.000 per kg
 
         // RajaOngkir V2 returns flat array of shipping options
         foreach ($data['data'] as $option) {

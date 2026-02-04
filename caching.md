@@ -89,10 +89,10 @@ php artisan config:clear
 
 ### Bisa Di-cache Nanti:
 
-- [ ] Categories list (TTL: 24 jam)
-- [ ] Product detail page (TTL: 30 menit)
+- [x] Categories list (TTL: 24 jam)
+- [x] Product detail page (TTL: 30 menit)
 - [ ] Shop page results (TTL: 15 menit)
-- [ ] User orders (TTL: 5 menit)
+- [x] User orders (TTL: 5 menit)
 
 ### Advanced Caching:
 

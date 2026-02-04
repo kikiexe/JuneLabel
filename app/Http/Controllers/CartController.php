@@ -2,25 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
-use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Str;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class CartController extends Controller
 {
-    /**
-     * Get unique identifier for guest user
-     */
-    private function getCartIdentifier(Request $request)
-    {
-        if (Auth::check()) {
-            return null;
-        }
+    protected $cartService;
 
-        return $request->cookie('guest_cart_id');
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
     }
 
     /**
@@ -28,31 +20,7 @@ class CartController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Cart::with('product');
-
-        if (Auth::check()) {
-            $query->where('user_id', Auth::id());
-        } else {
-            $guestId = $this->getCartIdentifier($request);
-            if (!$guestId) {
-                return response()->json([]);
-            }
-            $query->where('identifier', $guestId);
-        }
-
-        $items = $query->get()->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'product_id' => $item->product_id,
-                'name' => $item->product->name,
-                'price' => $item->product->price,
-                'image' => $item->product->image,
-                'slug' => $item->product->slug,
-                'quantity' => $item->quantity,
-                'stock' => $item->product->stock ?? 100,
-            ];
-        });
-
+        $items = $this->cartService->getCartItems($request);
         return response()->json($items);
     }
 
@@ -63,57 +31,38 @@ class CartController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1|max:10',
         ]);
 
-        $productId = $request->product_id;
-        $quantity = $request->quantity;
+        try {
+            $cookie = $this->cartService->addToCart(
+                $request,
+                $request->product_id,
+                $request->quantity
+            );
 
-        // Tentukan Identifier & Cookie
-        $guestId = null;
-        $cookie = null;
-
-        if (!Auth::check()) {
-            $guestId = $request->cookie('guest_cart_id');
-            if (!$guestId) {
-                $guestId = (string) Str::uuid();
-                // 30 hari
-                $cookie = Cookie::make('guest_cart_id', $guestId, 60 * 24 * 30);
-            }
-        }
-
-        // Cek existing item
-        $query = Cart::where('product_id', $productId);
-
-        if (Auth::check()) {
-            $query->where('user_id', Auth::id());
-        } else {
-            $query->where('identifier', $guestId);
-        }
-
-        $existingItem = $query->first();
-
-        if ($existingItem) {
-            $existingItem->increment('quantity', $quantity);
-        } else {
-            Cart::create([
-                'user_id' => Auth::check() ? Auth::id() : null,
-                'identifier' => Auth::check() ? null : $guestId,
-                'product_id' => $productId,
-                'quantity' => $quantity,
+            $response = response()->json([
+                'success' => true,
+                'message' => 'Produk berhasil ditambahkan ke keranjang',
             ]);
+
+            if ($cookie) {
+                return $response->withCookie($cookie);
+            }
+
+            return $response;
+        } catch (\Exception $e) {
+            // Check if it's a validation/logic error (like stock)
+            $statusCode = 400;
+            if (str_contains($e->getMessage(), 'Stok') || str_contains($e->getMessage(), 'Maksimal')) {
+                $statusCode = 422;
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], $statusCode);
         }
-
-        $response = response()->json([
-            'success' => true,
-            'message' => 'Produk berhasil ditambahkan ke keranjang',
-        ]);
-
-        if ($cookie) {
-            return $response->withCookie($cookie);
-        }
-
-        return $response;
     }
 
     /**
@@ -122,22 +71,20 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'quantity' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1|max:10',
         ]);
 
-        $item = Cart::findOrFail($id);
-
-        // Security check
-        if (Auth::check()) {
-            if ($item->user_id !== Auth::id()) abort(403);
-        } else {
-            $guestId = $request->cookie('guest_cart_id');
-            if ($item->identifier !== $guestId) abort(403);
+        try {
+            $this->cartService->updateItem($request, $id, $request->quantity);
+            return response()->json(['success' => true]);
+        } catch (AuthorizationException $e) {
+            abort(403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
         }
-
-        $item->update(['quantity' => $request->quantity]);
-
-        return response()->json(['success' => true]);
     }
 
     /**
@@ -145,19 +92,17 @@ class CartController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $item = Cart::findOrFail($id);
-
-        // Security check
-        if (Auth::check()) {
-            if ($item->user_id !== Auth::id()) abort(403);
-        } else {
-            $guestId = $request->cookie('guest_cart_id');
-            if ($item->identifier !== $guestId) abort(403);
+        try {
+            $this->cartService->removeItem($request, $id);
+            return response()->json(['success' => true]);
+        } catch (AuthorizationException $e) {
+            abort(403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
         }
-
-        $item->delete();
-
-        return response()->json(['success' => true]);
     }
 
     /**
@@ -165,16 +110,7 @@ class CartController extends Controller
      */
     public function count(Request $request)
     {
-        $query = Cart::query();
-
-        if (Auth::check()) {
-            $query->where('user_id', Auth::id());
-        } else {
-            $guestId = $request->cookie('guest_cart_id');
-            if (!$guestId) return response()->json(['count' => 0]);
-            $query->where('identifier', $guestId);
-        }
-
-        return response()->json(['count' => $query->count()]);
+        $count = $this->cartService->count($request);
+        return response()->json(['count' => $count]);
     }
 }

@@ -17,9 +17,12 @@ import { useCart } from '@/Contexts/CartContext';
 import Cookies from 'js-cookie';
 import { CONTACT_INFO } from '@/Constants/contact';
 import { Category } from '@/types';
+import CartSidebar from '@/Components/Cart/CartSidebar';
 
 export default function Navbar() {
-  const { getCartCount } = useCart();
+  const { getCartCount, openCart } = useCart();
+  // ... existing code ...
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -60,7 +63,7 @@ export default function Navbar() {
     if (searchQuery.trim()) {
       // Encode search query untuk handle special characters
       const encodedQuery = encodeURIComponent(searchQuery.trim());
-      router.visit(route('shop.index', { search: encodedQuery }));
+      router.visit(route('collections.all', { search: encodedQuery }));
       setSearchOpen(false);
     }
   };
@@ -93,40 +96,79 @@ export default function Navbar() {
       <Alert isOpen={alertOpen} onClose={() => setAlertOpen(false)} />
 
       <nav
-        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled ? 'shadow-sm' : ''
+        className={`font-inter py-3 px-6 xl:px-16 fixed top-0 left-0 w-full z-[999] transition-all duration-300 ${
+          isScrolled ? 'shadow-sm border-b border-[#7C634D]/20' : 'border-b border-transparent'
         }`}
         style={{
-          backgroundColor: isScrolled ? '#FFF6EC' : 'transparent',
+          backgroundColor: isScrolled ? '#FFF6EC' : '#FFFFFF',
           color: '#7C634D',
         }}
       >
         <div className="w-full flex items-center justify-between relative">
           <div className="hidden xl:flex items-center gap-10 flex-1">
-            <NavbarLink href={route('shop.index', { sort: 'latest' })}>NEW ARRIVAL</NavbarLink>
-            <NavbarLink href={route('shop.index', { sort: 'price_desc' })}>BEST SELLER</NavbarLink>
+            <NavbarLink href={route('collections.new-arrival')}>NEW ARRIVAL</NavbarLink>
+            <NavbarLink href={route('collections.best-seller')}>BEST SELLER</NavbarLink>
 
-            <div className="group relative">
-              <div className="py-4">
-                <NavbarLink
-                  href={route('shop.index', {}) /* empty params */}
-                  className="group-hover:text-[#7C634D]"
-                >
+            <div className="group static h-full flex items-center cursor-pointer">
+              <div className="relative py-4">
+                <span className="text-sm font-medium text-[#7C634D] group-hover:text-[#7C634D]">
                   COLLECTIONS
-                </NavbarLink>
+                </span>
+                <span className="absolute bottom-2.5 left-0 w-full h-[2px] bg-[#7C634D] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out hidden xl:block"></span>
               </div>
 
-              <div className="absolute top-full left-0 w-64 bg-[#7C634D] shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
-                <div className="flex flex-col py-4 px-6 space-y-4">
-                  {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href={route('shop.index', { category: category.slug })}
-                      className="text-white hover:text-[#FFF6EC] font-medium text-sm transition-colors text-left"
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
+              <div
+                className="absolute top-full left-0 w-full shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-[100] border-y border-[#7C634D]/10 mt-1"
+                style={{ backgroundColor: isScrolled ? '#FFF6EC' : '#FFFFFF' }}
+              >
+                <div className="w-full px-6 xl:px-16 py-8">
+                  <div className="flex justify-start gap-32">
+                    {/* Dynamic Category Columns */}
+                    {categories.map((parentCategory) => (
+                      <div key={parentCategory.id} className="flex flex-col gap-4 text-left">
+                        <h3 className="text-[#7C634D] font-serif font-bold text-lg tracking-widest uppercase border-b border-[#7C634D]/20 pb-2 mb-2 w-48">
+                          {parentCategory.name}
+                        </h3>
+                        <div className="flex flex-col gap-2">
+                          {parentCategory.children && parentCategory.children.length > 0 ? (
+                            parentCategory.children.map((child) => (
+                              <Link
+                                key={child.id}
+                                href={route('collections.detail', child.slug)}
+                                className="text-[#7C634D]/80 hover:text-[#7C634D] hover:translate-x-1 transition-all duration-300 text-sm font-light"
+                              >
+                                {child.name}
+                              </Link>
+                            ))
+                          ) : (
+                            <span className="text-[#7C634D]/40 text-xs italic">
+                              No subcategories
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {categories.length === 0 && (
+                      <span className="text-[#7C634D]/40 text-sm italic">
+                        Loading collections...
+                      </span>
+                    )}
+                  </div>
+                  {/* Close Button */}
+                  <button
+                    className="absolute top-4 right-6 text-[#7C634D]/60 hover:text-[#7C634D] transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Force close by removing hover state
+                      const dropdown = e.currentTarget.closest('.group');
+                      if (dropdown) {
+                        dropdown.classList.remove('group');
+                        setTimeout(() => dropdown.classList.add('group'), 100);
+                      }
+                    }}
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
               </div>
             </div>
@@ -161,14 +203,14 @@ export default function Navbar() {
               <Search size={20} color="#7C634D" strokeWidth={2} />
             </button>
 
-            <Link href="/cart" className="hover:opacity-70 transition-opacity relative">
+            <button onClick={openCart} className="hover:opacity-70 transition-opacity relative">
               <ShoppingBag size={20} color="#7C634D" strokeWidth={2} />
               {getCartCount() > 0 && (
                 <span className="absolute -top-2 -right-2 bg-[#7C634D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                   {getCartCount()}
                 </span>
               )}
-            </Link>
+            </button>
 
             <Link
               href={Cookies.get('token') ? '/dashboard' : '/login'}
@@ -228,13 +270,13 @@ export default function Navbar() {
             <div className="flex-1 overflow-y-auto py-4">
               <div className="flex flex-col">
                 <Link
-                  href={route('shop.index', { sort: 'latest' })}
+                  href={route('collections.all', { sort: 'latest' })}
                   className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                 >
                   New Arrival
                 </Link>
                 <Link
-                  href={route('shop.index', { sort: 'price_desc' })}
+                  href={route('collections.all', { sort: 'price_desc' })}
                   className="px-6 py-4 text-sm font-medium text-[#7C634D] border-b border-[#7C634D]/5 hover:bg-[#7C634D]/5 transition-colors uppercase tracking-wide"
                 >
                   Best Seller
@@ -249,18 +291,35 @@ export default function Navbar() {
 
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out bg-[#F8F1EB] ${
-                    collectionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    collectionsOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
                   <div className="flex flex-col py-2">
-                    {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={route('shop.index', { category: category.slug })}
-                        className="pl-10 pr-6 py-3 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
-                      >
-                        {category.name}
-                      </Link>
+                    <Link
+                      href={route('collections.index')}
+                      className="pl-10 pr-6 py-3 text-sm font-bold text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left"
+                    >
+                      All Collections
+                    </Link>
+                    {categories.map((parentCategory) => (
+                      <div key={parentCategory.id}>
+                        {/* Parent Category Header */}
+                        <div className="pl-10 pr-6 py-2 text-xs font-semibold text-[#7C634D]/60 uppercase tracking-wider mt-2">
+                          {parentCategory.name}
+                        </div>
+                        {/* Child Categories */}
+                        {parentCategory.children &&
+                          parentCategory.children.map((child) => (
+                            <Link
+                              key={child.id}
+                              href={route('collections.detail', child.slug)}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="pl-14 pr-6 py-2 text-sm text-[#7C634D]/80 hover:text-[#7C634D] hover:bg-[#7C634D]/5 transition-colors text-left block"
+                            >
+                              {child.name}
+                            </Link>
+                          ))}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -313,6 +372,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+      <CartSidebar />
     </>
   );
 }

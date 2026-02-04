@@ -29,25 +29,87 @@ interface ShopFilters {
   category?: string;
   sort?: string;
   page?: number;
+  availability?: string;
+  price_min?: string;
+  price_max?: string;
 }
 
 interface Props {
   products: PaginatedData<Product>;
-  categories: Category[];
   filters: ShopFilters;
+  customTitle?: string;
+  customDescription?: string;
+  availabilityCounts: { in_stock: number; out_of_stock: number };
+  maxPrice: number;
 }
 
-export default function ShopIndex({ products, categories, filters }: Props) {
-  const [search, setSearch] = useState(filters.search || '');
-  const [selectedCategory, setSelectedCategory] = useState(filters.category || '');
-  const [sort, setSort] = useState(filters.sort || 'latest');
+export default function ShopIndex({
+  products,
+  filters,
+  customTitle,
+  customDescription,
+  availabilityCounts,
+  maxPrice,
+}: Props) {
+  // Defensive: ensure all props are properly typed
+  // Laravel may send empty array [] instead of empty object {} in some cases
+  const safeFilters: ShopFilters =
+    filters && typeof filters === 'object' && !Array.isArray(filters) ? filters : {};
+  const safeProducts =
+    products && typeof products === 'object' && !Array.isArray(products) && products.data
+      ? products
+      : {
+          data: [],
+          current_page: 1,
+          last_page: 1,
+          per_page: 12,
+          total: 0,
+          links: [],
+          from: 0,
+          to: 0,
+        };
+  const safeAvailabilityCounts =
+    availabilityCounts && typeof availabilityCounts === 'object'
+      ? availabilityCounts
+      : { in_stock: 0, out_of_stock: 0 };
+  const safeMaxPrice = typeof maxPrice === 'number' && maxPrice > 0 ? maxPrice : 1000000;
+
+  const [search, setSearch] = useState(safeFilters.search || '');
+  const [selectedCategory, setSelectedCategory] = useState(safeFilters.category || '');
+  const [sortOrder, setSortOrder] = useState(safeFilters.sort || 'latest');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // New Filters
+  const [availability, setAvailability] = useState<string[]>(
+    safeFilters.availability ? safeFilters.availability.split(',') : []
+  );
+  const [priceMin, setPriceMin] = useState(safeFilters.price_min || '');
+  const [priceMax, setPriceMax] = useState(safeFilters.price_max || '');
+
+  // Helper function to format slug to title case
+  const formatSlug = (slug: string) => {
+    return slug
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Determine Title Logic
+  const displayTitle = customTitle
+    ? customTitle
+    : safeFilters.category
+      ? formatSlug(safeFilters.category)
+      : 'All Collections';
+
+  const displayDescription =
+    customDescription ||
+    (safeFilters.category
+      ? `Discover our premium ${formatSlug(safeFilters.category)} collection.`
+      : 'Discover our premium hijab collection, designed for comfort and elegance.');
+
   // SEO
-  const pageTitle = filters.category
-    ? categories.find((c) => c.slug === filters.category)?.name || 'Shop'
-    : 'Shop Collection';
-  const pageDescription = `Discover our premium ${filters.category || 'hijab'} collection. ${products.total} products available.`;
+  const pageTitle = displayTitle;
+  const pageDescription = `Discover our premium ${safeFilters.category || 'hijab'} collection. ${safeProducts.total} products available.`;
 
   const sortOptions = [
     { value: 'newest', label: 'Newest' },
@@ -76,7 +138,7 @@ export default function ShopIndex({ products, categories, filters }: Props) {
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (search !== (filters.search || '')) {
+      if (search !== (safeFilters.search || '')) {
         handleFilterChange('search', search);
       }
     }, 500);
@@ -86,7 +148,7 @@ export default function ShopIndex({ products, categories, filters }: Props) {
 
   const handleFilterChange = (key: keyof ShopFilters, value: any) => {
     router.get(
-      route('shop.index'),
+      window.location.pathname,
       {
         ...filters,
         [key]: value,
@@ -99,6 +161,42 @@ export default function ShopIndex({ products, categories, filters }: Props) {
         preserveScroll: true,
       }
     );
+  };
+
+  const handleAvailabilityChange = (value: string) => {
+    const newAvailability = availability.includes(value)
+      ? availability.filter((a) => a !== value)
+      : [...availability, value];
+
+    setAvailability(newAvailability);
+    handleFilterChange('availability', newAvailability.join(','));
+  };
+
+  const handlePriceApply = () => {
+    const params: any = { ...filters };
+    if (priceMin) params.price_min = priceMin;
+    else delete params.price_min;
+
+    if (priceMax) params.price_max = priceMax;
+    else delete params.price_max;
+
+    params.page = 1;
+
+    // Use current URL to preserve category/collection context
+    router.get(window.location.pathname, params, {
+      preserveState: true,
+      replace: true,
+      preserveScroll: true,
+    });
+  };
+
+  const resetFilters = () => {
+    setAvailability([]);
+    setPriceMin('');
+    setPriceMax('');
+
+    const { category, search, sort } = filters;
+    router.get(route('collections.all'), { category, search, sort }, { preserveState: true });
   };
 
   const formatPrice = (price: number) => {
@@ -114,12 +212,12 @@ export default function ShopIndex({ products, categories, filters }: Props) {
       <SeoHead title={pageTitle} description={pageDescription} url={window.location.href} />
       <Navbar />
 
-      <div className="bg-[#FFF6EC] pt-28 pb-12 px-4 md:px-8 lg:px-16 text-center">
+      <div className="pt-28 pb-12 px-4 md:px-8 lg:px-16 text-center">
         <h1 className="text-3xl md:text-4xl font-serif font-bold uppercase tracking-widest mb-4">
-          All Collections
+          {displayTitle}
         </h1>
         <p className="max-w-xl mx-auto text-sm md:text-base font-light opacity-80">
-          Discover our premium hijab collection, designed for comfort and elegance.
+          {displayDescription}
         </p>
       </div>
 
@@ -132,14 +230,14 @@ export default function ShopIndex({ products, categories, filters }: Props) {
           >
             <SlidersHorizontal size={18} /> Filters
           </button>
-          <span className="text-xs text-gray-400">{products.total} Products</span>
+          <span className="text-xs text-gray-400">{safeProducts.total} Products</span>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 relative">
           {/* Sidebar Filters (Desktop) */}
           <aside
             className={`
-                        fixed inset-0 z-50 bg-white lg:static lg:bg-transparent lg:w-1/4 lg:block
+                        fixed inset-0 z-50 bg-white lg:static lg:bg-transparent lg:w-1/5 lg:block
                         transform transition-transform duration-300 ease-in-out p-6 lg:p-0
                         ${mobileFilterOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                     `}
@@ -171,48 +269,133 @@ export default function ShopIndex({ products, categories, filters }: Props) {
               </div>
             </div>
 
-            {/* Categories */}
-            <div className="mb-8">
-              <h3 className="font-serif text-lg font-bold border-b border-[#7C634D]/20 pb-2 mb-4">
-                Categories
+            {/* Availability Filter */}
+            <div className="mb-8 border-b border-[#7C634D]/10 pb-6">
+              <h3 className="font-serif text-sm font-bold uppercase tracking-wider mb-4">
+                Availability
               </h3>
-              <ul className="space-y-3 text-sm">
-                <li>
-                  <button
-                    onClick={() => {
-                      setSelectedCategory('');
-                      handleFilterChange('category', '');
-                      setMobileFilterOpen(false);
-                    }}
-                    className={`hover:underline underline-offset-4 transition-all ${
-                      !filters.category
-                        ? 'font-bold pl-2 border-l-2 border-[#7C634D]'
-                        : 'opacity-70'
-                    }`}
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div
+                    className={`w-4 h-4 border border-[#7C634D] flex items-center justify-center transition-colors ${availability.includes('in_stock') ? 'bg-[#7C634D]' : 'bg-white'}`}
                   >
-                    All Products
-                  </button>
-                </li>
-                {categories.map((cat) => (
-                  <li key={cat.id}>
-                    <button
-                      onClick={() => {
-                        setSelectedCategory(cat.slug);
-                        handleFilterChange('category', cat.slug);
-                        setMobileFilterOpen(false);
-                      }}
-                      className={`text-left hover:underline underline-offset-4 transition-all ${
-                        filters.category === cat.slug
-                          ? 'font-bold pl-2 border-l-2 border-[#7C634D]'
-                          : 'opacity-70'
-                      }`}
-                    >
-                      {cat.name}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                    {availability.includes('in_stock') && (
+                      <span className="text-white text-xs">✓</span>
+                    )}
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={availability.includes('in_stock')}
+                    onChange={() => handleAvailabilityChange('in_stock')}
+                  />
+                  <span className="text-sm group-hover:opacity-70 transition-opacity">
+                    In Stock ({safeAvailabilityCounts.in_stock})
+                  </span>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <div
+                    className={`w-4 h-4 border border-[#7C634D] flex items-center justify-center transition-colors ${availability.includes('out_of_stock') ? 'bg-[#7C634D]' : 'bg-white'}`}
+                  >
+                    {availability.includes('out_of_stock') && (
+                      <span className="text-white text-xs">✓</span>
+                    )}
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={availability.includes('out_of_stock')}
+                    onChange={() => handleAvailabilityChange('out_of_stock')}
+                  />
+                  <span className="text-sm group-hover:opacity-70 transition-opacity">
+                    Out of Stock ({safeAvailabilityCounts.out_of_stock})
+                  </span>
+                </label>
+              </div>
             </div>
+
+            {/* Price Range Filter */}
+            <div className="mb-8 border-b border-[#7C634D]/10 pb-6">
+              <div className="flex justify-between items-end mb-4">
+                <h3 className="font-serif text-sm font-bold uppercase tracking-wider">
+                  Price (IDR)
+                </h3>
+              </div>
+
+              {/* Dual Range Slider */}
+              <div className="relative h-1 bg-gray-200 rounded mt-4 mb-6">
+                <div
+                  className="absolute top-0 bottom-0 bg-[#7C634D] rounded"
+                  style={{
+                    left: `${(Number(priceMin || 0) / safeMaxPrice) * 100}%`,
+                    right: `${100 - (Number(priceMax || safeMaxPrice) / safeMaxPrice) * 100}%`,
+                  }}
+                ></div>
+
+                <input
+                  type="range"
+                  min="0"
+                  max={safeMaxPrice}
+                  step="1000"
+                  value={priceMin || 0}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    const currentMax = Number(priceMax || safeMaxPrice);
+                    if (val < currentMax) setPriceMin(val.toString());
+                  }}
+                  className="absolute -top-1.5 w-full h-4 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#7C634D] [&::-webkit-slider-thumb]:appearance-none cursor-pointer z-20"
+                />
+
+                <input
+                  type="range"
+                  min="0"
+                  max={safeMaxPrice}
+                  step="1000"
+                  value={priceMax || safeMaxPrice}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    const currentMin = Number(priceMin || 0);
+                    if (val > currentMin) setPriceMax(val.toString());
+                  }}
+                  className="absolute -top-1.5 w-full h-4 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#7C634D] [&::-webkit-slider-thumb]:appearance-none cursor-pointer z-30"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 mb-4">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={priceMin}
+                  onChange={(e) => setPriceMin(e.target.value)}
+                  className="w-full bg-[#f9f9f9] border border-gray-200 px-3 py-2 text-xs focus:border-[#7C634D] focus:ring-0 outline-none"
+                />
+                <span className="text-gray-400">-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(e.target.value)}
+                  className="w-full bg-[#f9f9f9] border border-gray-200 px-3 py-2 text-xs focus:border-[#7C634D] focus:ring-0 outline-none"
+                />
+              </div>
+              <button
+                onClick={handlePriceApply}
+                className="w-full bg-[#7C634D] text-white py-2 text-xs uppercase font-bold tracking-wider hover:bg-[#65503D] transition-colors"
+              >
+                Apply Price
+              </button>
+            </div>
+
+            {/* Reset Filter */}
+            {(safeFilters.availability || safeFilters.price_min || safeFilters.price_max) && (
+              <button
+                onClick={resetFilters}
+                className="w-full border border-[#7C634D] text-[#7C634D] py-2 text-xs uppercase font-bold tracking-wider hover:bg-[#7C634D] hover:text-white transition-colors"
+              >
+                Reset Filters
+              </button>
+            )}
           </aside>
 
           {/* Product Grid Area */}
@@ -240,17 +423,20 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                 </span>
                 <div className="relative w-full sm:w-auto">
                   <select
-                    value={sort}
+                    value={sortOrder}
                     onChange={(e) => {
-                      setSort(e.target.value);
+                      setSortOrder(e.target.value);
                       handleFilterChange('sort', e.target.value);
                     }}
                     className="w-full sm:w-48 appearance-none bg-white border border-[#7C634D]/20 py-2 pl-4 pr-10 text-sm focus:border-[#7C634D] focus:ring-0 text-[#7C634D] cursor-pointer"
                   >
-                    <option value="latest">Latest Arrival</option>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
-                    <option value="oldest">Oldest</option>
+                    <option value="price_asc">Price: Low - High</option>
+                    <option value="price_desc">Price: High - Low</option>
+                    <option value="name_asc">Alphabet: A - Z</option>
+                    <option value="name_desc">Alphabet: Z - A</option>
+                    <option value="oldest">Date: Oldest - Newest</option>
+                    <option value="latest">Date: Newest - Oldest</option>
+                    <option value="best_seller">Best Seller</option>
                   </select>
                   <ChevronDown
                     className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"
@@ -261,11 +447,11 @@ export default function ShopIndex({ products, categories, filters }: Props) {
             </div>
 
             {/* Active Filters display */}
-            {(filters.search || filters.category) && (
+            {(safeFilters.search || safeFilters.category) && (
               <div className="mb-6 flex gap-2 flex-wrap text-xs">
-                {filters.search && (
+                {safeFilters.search && (
                   <span className="bg-[#7C634D] text-[#FFF6EC] px-3 py-1 rounded-full flex items-center gap-2">
-                    Search: "{filters.search}"
+                    Search: "{safeFilters.search}"
                     <button
                       onClick={() => {
                         setSearch('');
@@ -276,10 +462,9 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                     </button>
                   </span>
                 )}
-                {filters.category && (
+                {safeFilters.category && (
                   <span className="bg-[#7C634D] text-[#FFF6EC] px-3 py-1 rounded-full flex items-center gap-2">
-                    Category:{' '}
-                    {categories.find((c) => c.slug === filters.category)?.name || filters.category}
+                    Category: {formatSlug(safeFilters.category)}
                     <button
                       onClick={() => {
                         setSelectedCategory('');
@@ -291,7 +476,7 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                   </span>
                 )}
                 <button
-                  onClick={() => router.get(route('shop.index'))}
+                  onClick={() => router.get(route('collections.all'))}
                   className="text-[#7C634D] underline underline-offset-2 hover:opacity-70 px-2"
                 >
                   Clear All
@@ -300,10 +485,10 @@ export default function ShopIndex({ products, categories, filters }: Props) {
             )}
 
             {/* Product Grid */}
-            {products.data.length > 0 ? (
+            {safeProducts.data.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-10 lg:gap-x-8 lg:gap-y-12">
-                  {products.data.map((product) => (
+                  {safeProducts.data.map((product) => (
                     <Link
                       key={product.id}
                       href={route('product.detail', product.slug)}
@@ -313,6 +498,8 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                         <img
                           src={`/storage/${product.image}`}
                           alt={product.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         {/* Badge Overlay can go here (e.g. Sale, New) */}
@@ -340,9 +527,9 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                 </div>
 
                 {/* Pagination */}
-                {products.links && products.links.length > 3 && (
+                {safeProducts.links && safeProducts.links.length > 3 && (
                   <div className="mt-16 flex justify-center gap-2">
-                    {products.links.map((link, index) => {
+                    {safeProducts.links.map((link, index) => {
                       const decodeLabel = (label: string) => {
                         if (label === '&laquo; Previous') return '← Previous';
                         if (label === 'Next &raquo;') return 'Next →';
@@ -378,7 +565,7 @@ export default function ShopIndex({ products, categories, filters }: Props) {
                   Try adjusting your search or filters to find what you're looking for.
                 </p>
                 <button
-                  onClick={() => router.get(route('shop.index'))}
+                  onClick={() => router.get(route('collections.index'))}
                   className="bg-[#7C634D] text-white px-6 py-2 text-xs uppercase tracking-widest font-bold hover:bg-[#65503D] transition-colors"
                 >
                   View All Products

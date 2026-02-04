@@ -10,7 +10,7 @@ use App\Models\Product;
 
 Route::get('/', function () {
     // Cache new arrivals selama 1 jam (3600 detik)
-    $newArrivals = Cache::remember('homepage.new_arrivals', 3600, function () {
+    $newArrivals = Cache::remember('homepage.new_arrivals', config('cache.ttl.homepage', 3600), function () {
         return Product::with('category')
             ->where('is_active', true)
             ->latest()
@@ -19,7 +19,7 @@ Route::get('/', function () {
     });
 
     // Cache best sellers selama 1 jam
-    $bestSellers = Cache::remember('homepage.best_sellers', 3600, function () {
+    $bestSellers = Cache::remember('homepage.best_sellers', config('cache.ttl.homepage', 3600), function () {
         return Product::with('category')
             ->where('is_active', true)
             ->where('is_best_seller', true)
@@ -39,18 +39,26 @@ Route::get('/', function () {
 
 Route::get('/product/{slug}', function ($slug) {
     // Fix N+1: Eager load category
-    $product = Product::with('category')
-        ->where('slug', $slug)
-        ->where('is_active', true)
-        ->firstOrFail();
+    // Fix N+1: Eager load category
+    $product = Cache::remember('product.detail.' . $slug, 1800, function () use ($slug) {
+        return Product::with('category')
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+    });
 
     // Fix N+1: Eager load category
-    $relatedProducts = Product::with('category')
-        ->where('id', '!=', $product->id)
-        ->where('is_active', true)
-        ->inRandomOrder()
-        ->take(4)
-        ->get();
+    // Related products don't strictly need to be cached with the main product as they might be random,
+    // but caching them is good for performance. However, random order makes caching less effective if we want randomness.
+    // Let's cache them for a short time or bound to the product.
+    $relatedProducts = Cache::remember('product.related.' . $product->id, 1800, function () use ($product) {
+        return Product::with('category')
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+    });
 
     return Inertia::render('Products/Products', [
         'product' => $product,
@@ -65,10 +73,12 @@ Route::get('/dashboard', function () {
         return redirect()->route('login');
     }
 
-    $orders = \App\Models\Order::where('user_id', $user->id)
-        ->with('orderItems')
-        ->latest()
-        ->get();
+    $orders = Cache::remember('user.orders.' . $user->id, 300, function () use ($user) {
+        return \App\Models\Order::where('user_id', $user->id)
+            ->with('orderItems')
+            ->latest()
+            ->get();
+    });
 
     $totalOrders = $orders->count();
     // Filter by enum values - pending and processing are considered "pending"
@@ -165,7 +175,11 @@ Route::get('/cart', function () {
     return Inertia::render('Shop/Cart');
 })->name('cart');
 
-Route::get('/shop', [App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
+Route::get('/collections', [App\Http\Controllers\ShopController::class, 'collections'])->name('collections.index');
+Route::get('/collections/all', [App\Http\Controllers\ShopController::class, 'index'])->name('collections.all');
+Route::get('/collections/new-arrival', [App\Http\Controllers\ShopController::class, 'newArrivals'])->name('collections.new-arrival');
+Route::get('/collections/best-seller', [App\Http\Controllers\ShopController::class, 'bestSellers'])->name('collections.best-seller');
+Route::get('/collections/{slug}', [App\Http\Controllers\ShopController::class, 'collectionDetail'])->name('collections.detail');
 
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 

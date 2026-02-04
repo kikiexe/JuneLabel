@@ -2,10 +2,18 @@ import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import { useCart } from '@/Contexts/CartContext';
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Loader2 } from 'lucide-react';
 
 export default function Cart() {
-  const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
+  const {
+    cartItems,
+    updateQuantity,
+    removeFromCart,
+    getCartTotal,
+    clearCart,
+    isLoading,
+    isUpdating,
+  } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -14,6 +22,18 @@ export default function Cart() {
       minimumFractionDigits: 0,
     }).format(price);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#FFF6EC] font-inter">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <Loader2 className="animate-spin text-[#7C634D]" size={48} />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF6EC] font-inter">
@@ -59,10 +79,11 @@ export default function Cart() {
               </div>
 
               {cartItems.map((item) => {
-                const price = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
-                const itemSlug = item.product?.slug || (item as any).slug; // Handle legacy slug access if needed
-                const itemName = item.product?.name || (item as any).name;
-                const itemImage = item.product?.image || (item as any).image;
+                // With new API structure, properties are direct
+                const price = item.price;
+                const itemSlug = item.slug;
+                const itemName = item.name;
+                const itemImage = item.image;
 
                 return (
                   <div
@@ -71,9 +92,15 @@ export default function Cart() {
                   >
                     {/* Product Info */}
                     <div className="col-span-1 md:col-span-6 flex gap-4">
-                      <div className="w-20 h-24 bg-gray-200 flex-shrink-0">
+                      <div className="w-20 h-24 bg-gray-200 flex-shrink-0 relative overflow-hidden">
                         <img
-                          src={`/storage/${itemImage}`}
+                          src={
+                            itemImage
+                              ? itemImage.startsWith('http')
+                                ? itemImage
+                                : `/storage/${itemImage}`
+                              : '/images/placeholder.jpg'
+                          }
                           alt={itemName}
                           loading="lazy"
                           className="w-full h-full object-cover"
@@ -82,13 +109,14 @@ export default function Cart() {
                       <div className="flex flex-col justify-center">
                         <Link
                           href={`/product/${itemSlug}`}
-                          className="font-serif text-[#7C634D] text-lg hover:underline decoration-[#7C634D]/30 underline-offset-4"
+                          className="font-serif text-[#7C634D] text-lg hover:underline decoration-[#7C634D]/30 underline-offset-4 line-clamp-2"
                         >
                           {itemName}
                         </Link>
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 mt-2 w-fit transition-colors focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded px-1"
+                          disabled={isUpdating}
+                          className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 mt-2 w-fit transition-colors focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded px-1 disabled:opacity-50"
                           aria-label="Remove item from cart"
                         >
                           <Trash2 size={12} /> Remove
@@ -108,7 +136,7 @@ export default function Cart() {
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-offset-1"
-                        disabled={item.quantity <= 1}
+                        disabled={item.quantity <= 1 || isUpdating}
                         aria-label="Decrease quantity"
                       >
                         <Minus size={14} color="#7C634D" />
@@ -118,7 +146,8 @@ export default function Cart() {
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-offset-1"
+                        className="p-1 hover:bg-[#7C634D]/10 rounded transition-colors focus-visible:ring-2 focus-visible:ring-[#7C634D] focus-visible:ring-offset-1 disabled:opacity-50"
+                        disabled={isUpdating || item.quantity >= 10 || item.quantity >= item.stock}
                         aria-label="Increase quantity"
                       >
                         <Plus size={14} color="#7C634D" />
@@ -137,7 +166,8 @@ export default function Cart() {
               <div className="flex justify-end pt-4">
                 <button
                   onClick={clearCart}
-                  className="text-xs text-red-500 hover:text-red-700 underline underline-offset-2 transition-colors"
+                  className="text-xs text-red-500 hover:text-red-700 underline underline-offset-2 transition-colors disabled:opacity-50"
+                  disabled={isUpdating}
                 >
                   Clear Shopping Cart
                 </button>
@@ -167,9 +197,13 @@ export default function Cart() {
 
               <Link
                 href={route('checkout.index')}
-                className="block text-center w-full bg-[#7C634D] text-white py-4 font-bold text-sm tracking-widest uppercase hover:bg-[#65503D] transition-colors relative overflow-hidden group"
+                className={`block text-center w-full bg-[#7C634D] text-white py-4 font-bold text-sm tracking-widest uppercase hover:bg-[#65503D] transition-colors relative overflow-hidden group ${isUpdating ? 'opacity-75 cursor-not-allowed pointer-events-none' : ''}`}
               >
-                <span className="relative z-10">Proceed to Checkout</span>
+                {isUpdating ? (
+                  'Updating...'
+                ) : (
+                  <span className="relative z-10">Proceed to Checkout</span>
+                )}
               </Link>
 
               <p className="tex-xs text-center text-gray-400 mt-4 text-[10px]">
