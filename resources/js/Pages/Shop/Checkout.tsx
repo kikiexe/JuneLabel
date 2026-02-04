@@ -52,7 +52,7 @@ export default function Checkout() {
 
   useEffect(() => {
     const itemsPayload = cartItems.map((item) => ({
-      id: item.id,
+      id: item.product_id,
       quantity: item.quantity,
     }));
 
@@ -194,11 +194,19 @@ export default function Checkout() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting checkout form with data:', data);
 
     post(route('checkout.store'), {
+      onBefore: () => console.log('Starting checkout request...'),
       onSuccess: () => {
+        console.log('Checkout successful!');
         clearCart();
       },
+      onError: (errors) => {
+        console.error('Checkout failed with errors:', errors);
+        alert('Checkout failed. Please check the form for errors.');
+      },
+      onFinish: () => console.log('Checkout request completed.'),
     });
   };
 

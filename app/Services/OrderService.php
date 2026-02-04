@@ -223,7 +223,7 @@ class OrderService
 
         // 2. Admin Email
         try {
-            Mail::to('admin@junelabel.com')->send(new NewOrderAlert($order));
+            Mail::to(config('mail.admin_address'))->send(new NewOrderAlert($order));
             Log::info('New order alert sent to admin: ' . $order->order_id);
         } catch (\Exception $e) {
             Log::error('Failed to send Admin Email: ' . $e->getMessage());
@@ -289,7 +289,7 @@ class OrderService
                 Log::info('Payment success email sent to customer: ' . $order->order_id);
 
                 // 2. Admin Email
-                Mail::to('admin@junelabel.com')->send(new AdminPaymentSuccess($order));
+                Mail::to(config('mail.admin_address'))->send(new AdminPaymentSuccess($order));
                 Log::info('Admin payment notification sent: ' . $order->order_id);
 
                 $order->payment_email_sent = true;

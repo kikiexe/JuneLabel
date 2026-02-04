@@ -25,7 +25,7 @@ return [
     ],
 
     'resend' => [
-        'key' => env('RESEND_KEY'),
+        'key' => env('RESEND_API_KEY'),
     ],
 
     'slack' => [
@@ -37,7 +37,7 @@ return [
 
     'rajaongkir' => [
         'api_key' => env('RAJAONGKIR_API_KEY'),
-        'origin_district_id' => env('RAJAONGKIR_ORIGIN_DISTRICT_ID', '1342'), // Default: Johor Baru
+        'origin_district_id' => env('RAJAONGKIR_ORIGIN_DISTRICT_ID', '1342'), 
         'default_couriers' => 'jne:sicepat:jnt:anteraja:ninja:pos:tiki:lion',
         'max_cost_threshold' => 100000,
         'urls' => [
