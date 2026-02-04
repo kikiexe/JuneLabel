@@ -276,7 +276,7 @@ export default function Footer() {
                   setEmail(e.target.value);
                   setEmailError('');
                 }}
-                placeholder="Enter your email address"
+                placeholder=" Enter your email address"
                 required
                 className="w-full px-0 py-2 text-xs border-b border-[#020002] bg-transparent focus:outline-none focus:border-[#020002] transition-colors placeholder-[#020002]/50"
               />
@@ -284,9 +284,12 @@ export default function Footer() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-3 text-xs tracking-[0.15em] text-[#020002] font-bold uppercase hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-4 group relative px-6 py-2 text-xs font-bold uppercase tracking-[0.15em] border border-[#7C634D] bg-[#7C634D] overflow-hidden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'SUBSCRIBING...' : 'SUBSCRIBE →'}
+                <span className="absolute inset-0 w-full h-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.32,0,0.67,0)] scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"></span>
+                <span className="relative z-10 text-white transition-colors duration-500 group-hover:text-[#7C634D]">
+                  {isSubmitting ? 'SUBSCRIBING...' : 'SUBSCRIBE →'}
+                </span>
               </button>
             </form>
           </div>
