@@ -12,7 +12,7 @@ export default function SeoHead({ title, description, image, url, type = 'websit
   const siteName = 'JuneLabel';
   const defaultDescription =
     'JuneLabel comes with variety of cute and sweet colors as characteristic of Muslimah who always spread kindness. Comfortable daily hijab for your everyday wear.';
-  const defaultImage = '/images/junelabel.png';
+  const defaultImage = '/images/junelabel.webp';
   const fullTitle = title ? `${title} - ${siteName}` : siteName;
 
   return (

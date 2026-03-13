@@ -4,9 +4,11 @@ export default function HeroSection() {
   return (
     <section className="relative w-full z-0">
       <img
-        src="/images/Hero/hero-banner.png"
+        src="/images/Hero/hero-banner.webp"
         alt="Hero Banner"
         className="w-full h-auto xl:h-screen xl:object-cover"
+        fetchPriority="high"
+        loading="eager"
       />
     </section>
   );

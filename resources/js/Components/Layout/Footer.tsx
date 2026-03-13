@@ -276,7 +276,7 @@ export default function Footer() {
                   setEmail(e.target.value);
                   setEmailError('');
                 }}
-                placeholder="Enter your email address"
+                placeholder=" Enter your email address"
                 required
                 className="w-full px-0 py-2 text-xs border-b border-[#020002] bg-transparent focus:outline-none focus:border-[#020002] transition-colors placeholder-[#020002]/50"
               />
