@@ -4,37 +4,37 @@ export default function WhyChooseUsSection() {
   const images = [
     {
       id: 1,
-      image: '/images/WhyUs/whyus-1.png',
+      image: '/images/WhyUs/whyus-1.webp',
       alt: 'Bahan nyaman dan adem',
       title: 'Bahan nyaman dan adem',
     },
     {
       id: 2,
-      image: '/images/WhyUs/whyus-2.png',
+      image: '/images/WhyUs/whyus-2.webp',
       alt: 'Model kekinian',
       title: 'Model kekinian',
     },
     {
       id: 3,
-      image: '/images/WhyUs/whyus-3.png',
+      image: '/images/WhyUs/whyus-3.webp',
       alt: 'Pilihan warna favorit',
       title: 'Pilihan warna favorit',
     },
     {
       id: 4,
-      image: '/images/WhyUs/whyus-4.png',
+      image: '/images/WhyUs/whyus-4.webp',
       alt: 'Kualias awet dan tahan lama',
       title: 'Kualias awet dan tahan lama',
     },
     {
       id: 5,
-      image: '/images/WhyUs/whyus-5.png',
+      image: '/images/WhyUs/whyus-5.webp',
       alt: 'Harga terjangkau',
       title: 'Harga terjangkau',
     },
     {
       id: 6,
-      image: '/images/WhyUs/whyus-6.png',
+      image: '/images/WhyUs/whyus-6.webp',
       alt: 'Packaging menarik',
       title: 'Packaging menarik',
     },

@@ -186,7 +186,7 @@ export default function Navbar() {
           <div className="hidden xl:block flex-shrink-0 mx-auto">
             <Link href="/" className="block">
               <img
-                src="/images/junelabel.png"
+                src="/images/junelabel.webp"
                 alt="Logo Junelabel"
                 className="h-9 xl:h-10 w-auto object-contain"
               />
@@ -263,7 +263,7 @@ export default function Navbar() {
               </button>
 
               <Link href="/" className="block" onClick={() => setMobileMenuOpen(false)}>
-                <img src="/images/junelabel.png" alt="June Label" className="h-6 w-auto" />
+                <img src="/images/junelabel.webp" alt="June Label" className="h-6 w-auto" />
               </Link>
             </div>
 
