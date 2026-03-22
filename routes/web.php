@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use App\Models\Product;
 
+// Sitemap — no middleware, cached response
+Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])
+    ->name('sitemap');
+
 Route::get('/', function () {
     // Cache new arrivals selama 1 jam (3600 detik)
     $newArrivals = Cache::remember('homepage.new_arrivals', config('cache.ttl.homepage', 3600), function () {

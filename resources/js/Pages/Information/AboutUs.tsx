@@ -8,7 +8,7 @@ export default function AboutUs() {
       <SeoHead
         title="Tentang Kami"
         description="Cerita JuneLabel - Jenama lokal yang menghadirkan hijab ternyaman dengan warna-warna manis untuk Muslimah Indonesia."
-        url={typeof window !== 'undefined' ? window.location.href : ''}
+        canonicalPath="/about-us"
       />
 
       <Navbar />

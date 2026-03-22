@@ -37,7 +37,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
       <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-64px)]">
         <div className="hidden lg:flex lg:w-1/3 relative overflow-hidden">
           <img
-            src="/images/Login/login.jpeg"
+            src="/images/Login/login.webp"
             alt="Login Banner"
             className="absolute inset-0 w-full h-full object-cover"
           />

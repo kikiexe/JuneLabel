@@ -21,7 +21,7 @@ export default function ProductPage({ auth, product, relatedProducts }: Props) {
           `Beli ${product.name} di JuneLabel. Hijab ternyaman untuk aktivitas harianmu.`
         }
         image={`/storage/${product.image}`}
-        url={window.location.href}
+        canonicalPath={`/product/${product.slug}`}
         type="product"
       />
 

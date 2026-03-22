@@ -18,7 +18,11 @@ interface Props {
 export default function Collections({ categories }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-white font-inter text-[#7C634D]">
-      <SeoHead title="Collections" description="Browse all our collections." />
+      <SeoHead
+        title="Collections"
+        description="Jelajahi semua koleksi hijab & fashion muslimah JuneLabel. Temukan pilihan pashmina, bergo, dan hijab segiempat terbaik."
+        canonicalPath="/collections"
+      />
       <Navbar />
 
       <div className="pt-28 pb-12 px-4 text-center">

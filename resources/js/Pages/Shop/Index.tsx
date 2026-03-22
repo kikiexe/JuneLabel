@@ -209,7 +209,7 @@ export default function ShopIndex({
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-inter text-[#7C634D]">
-      <SeoHead title={pageTitle} description={pageDescription} url={window.location.href} />
+      <SeoHead title={pageTitle} description={pageDescription} canonicalPath={window.location.pathname} />
       <Navbar />
 
       <div className="pt-28 pb-12 px-4 md:px-8 lg:px-16 text-center">

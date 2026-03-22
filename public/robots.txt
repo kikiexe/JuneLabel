@@ -1,5 +1,71 @@
+# ============================================================
+# robots.txt — JuneLabel (https://junelabel.id)
+# ============================================================
+
+# Allow all crawlers
 User-agent: *
-Disallow: /admin/
+
+# ---- Public pages: ALLOWED (implicitly) ----
+# /
+# /collections
+# /collections/all
+# /collections/new-arrival
+# /collections/best-seller
+# /collections/{slug}
+# /product/{slug}
+# /about-us
+# /contact-us
+# /our-store
+# /how-to-order
+# /how-to-pay
+# /shipping-policy
+# /privacy-policy
+# /terms-conditions
+# /payment-information
+# /track-order
+
+# ---- Private / transactional pages: DISALLOW ----
+Disallow: /dashboard
 Disallow: /dashboard/
+Disallow: /my-orders
+Disallow: /my-orders/
 Disallow: /checkout
+Disallow: /checkout/
+Disallow: /cart
+Disallow: /cart/
+Disallow: /profile
+Disallow: /profile/
+Disallow: /order/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+
+# ---- Internal / admin pages: DISALLOW ----
+Disallow: /admin
+Disallow: /admin/
+Disallow: /filament
+Disallow: /filament/
+
+# ---- API endpoints: DISALLOW ----
 Disallow: /api/
+Disallow: /api/cart/
+Disallow: /api/shipping/
+Disallow: /api/newsletter/
+Disallow: /api/contact/
+Disallow: /midtrans/
+
+# ---- Storage / internal assets: DISALLOW ----
+Disallow: /storage/
+
+# ---- Query params that create duplicate content ----
+# (search, sort, filter, page — let Google decide via canonical)
+Disallow: /*?*search=
+Disallow: /*?*sort=
+Disallow: /*?*availability=
+Disallow: /*?*price_min=
+Disallow: /*?*price_max=
+
+# ---- Sitemap location ----
+Sitemap: https://junelabel.id/sitemap.xml

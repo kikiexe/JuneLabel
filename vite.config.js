@@ -16,13 +16,10 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 5173,
-    host: 'localhost',
     hmr: {
       host: 'localhost',
-    },
-    watch: {
-      // usePolling: true,
     },
   },
   build: {
@@ -36,8 +33,5 @@ export default defineConfig({
       },
     },
     sourcemap: false,
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', '@inertiajs/react'],
   },
 });

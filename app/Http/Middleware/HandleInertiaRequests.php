@@ -34,6 +34,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // APP_URL dari .env — dipakai SeoHead untuk canonical URL & og:url
+            'appUrl' => rtrim(config('app.url'), '/'),
         ];
     }
 }

@@ -14,14 +14,13 @@ interface WelcomeProps {
 }
 
 export default function Welcome({ newArrivals, bestSellers }: WelcomeProps) {
-  const currentUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
     <>
       <SeoHead
         title="Toko Hijab & Fashion Muslimah"
         description="Temukan koleksi hijab, pashmina, dan fashion muslimah ternyaman dengan warna-warna pastel yang manis. JuneLabel - Spread Kindness."
-        url={currentUrl}
+        canonicalPath="/"
       />
 
       <Navbar />

@@ -71,7 +71,7 @@ export default function TrackOrder({ couriers }: TrackOrderProps) {
       <SeoHead
         title="Track Order"
         description="Lacak status pengiriman paket pesanan JuneLabel Anda dengan mudah."
-        url={typeof window !== 'undefined' ? window.location.href : ''}
+        canonicalPath="/track-order"
       />
       <Navbar />
       <main style={{ backgroundColor: '#ffffff' }} className="font-inter">

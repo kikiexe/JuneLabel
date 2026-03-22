@@ -81,7 +81,7 @@ export default function ContactUs() {
       <SeoHead
         title="Contact Us"
         description="Hubungi JuneLabel. Kami siap membantu Anda. WhatsApp, Email, atau kirim pesan langsung."
-        url={typeof window !== 'undefined' ? window.location.href : ''}
+        canonicalPath="/contact-us"
       />
       <Navbar />
       <main style={{ backgroundColor: '#ffffff' }} className="font-inter">
