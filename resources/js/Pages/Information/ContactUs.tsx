@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import SeoHead from '@/Components/SeoHead';
+import { OrganizationSchema } from '@/Components/InfoSchema';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import { Mail, Phone, MapPin } from 'lucide-react';
@@ -83,6 +84,7 @@ export default function ContactUs() {
         description="Hubungi JuneLabel. Kami siap membantu Anda. WhatsApp, Email, atau kirim pesan langsung."
         canonicalPath="/contact-us"
       />
+      <OrganizationSchema />
       <Navbar />
       <main style={{ backgroundColor: '#ffffff' }} className="font-inter">
         <div className="max-w-4xl mx-auto px-6 md:px-16 py-16 md:py-24">

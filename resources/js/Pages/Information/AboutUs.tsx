@@ -1,4 +1,5 @@
 import SeoHead from '@/Components/SeoHead';
+import { OrganizationSchema } from '@/Components/InfoSchema';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 
@@ -10,6 +11,7 @@ export default function AboutUs() {
         description="Cerita JuneLabel - Jenama lokal yang menghadirkan hijab ternyaman dengan warna-warna manis untuk Muslimah Indonesia."
         canonicalPath="/about-us"
       />
+      <OrganizationSchema />
 
       <Navbar />
 

@@ -1,4 +1,5 @@
 import SeoHead from '@/Components/SeoHead';
+import ProductSchema from '@/Components/ProductSchema';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
 import DetailSection from '@/Components/Sections/Product/Detail';
@@ -24,6 +25,7 @@ export default function ProductPage({ auth, product, relatedProducts }: Props) {
         canonicalPath={`/product/${product.slug}`}
         type="product"
       />
+      <ProductSchema product={product} />
 
       <Navbar />
 
