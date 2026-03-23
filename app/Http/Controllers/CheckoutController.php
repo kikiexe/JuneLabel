@@ -8,6 +8,7 @@ use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Enum\PaymentStatus;
 use App\Enum\OrderStatus;
@@ -19,7 +20,7 @@ class CheckoutController extends Controller
         return Inertia::render('Shop/Checkout');
     }
 
-    public function store(Request $request, OrderService $orderService)
+    public function store(Request $request, OrderService $orderService, \App\Services\CartService $cartService)
     {
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
@@ -39,16 +40,19 @@ class CheckoutController extends Controller
 
         try {
             // Business Logic delegated to OrderService
-            $order = $orderService->createOrder($validated, auth()->user());
+            $order = $orderService->createOrder($validated, Auth::user());
 
             // Handle Emails (could be queued in service, but called here for now)
             $orderService->sendNotifications($order);
+
+            // Bersihkan keranjang belanja setelah checkout sukses
+            $cartService->clearCart($request);
 
             return redirect()->route('order.complete', ['order' => $order->order_id])
                 ->with('success', 'Order created successfully. Please proceed to payment.');
         } catch (\Exception $e) {
             Log::error('Checkout Error: ' . $e->getMessage(), [
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'items' => $validated['items'] ?? [],
                 'exception' => $e
             ]);
@@ -63,7 +67,7 @@ class CheckoutController extends Controller
     {
         $order = Order::with('orderItems')->where('order_id', $orderCode)->firstOrFail();
 
-        if (auth()->check() && $order->user_id !== auth()->id()) {
+        if (Auth::check() && $order->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -78,7 +82,7 @@ class CheckoutController extends Controller
             $order = Order::with('orderItems')->where('order_id', $orderId)->firstOrFail();
 
             // Security: Only owner can cancel
-            if ($order->user_id !== auth()->id()) {
+            if ($order->user_id !== Auth::id()) {
                 return back()->with('error', 'Unauthorized action.');
             }
 
@@ -109,7 +113,7 @@ class CheckoutController extends Controller
 
                 Log::info('Order cancelled by customer', [
                     'order_id' => $order->order_id,
-                    'user_id' => auth()->id(),
+                    'user_id' => Auth::id(),
                 ]);
             });
 
@@ -117,7 +121,7 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             Log::error('Order cancellation error: ' . $e->getMessage(), [
                 'order_id' => $orderId,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
             ]);
 
             return back()->with('error', 'Failed to cancel order. Please try again.');
