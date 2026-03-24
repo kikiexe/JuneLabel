@@ -2,124 +2,110 @@
 
 Proyek E-commerce berbasis Laravel 11, Inertia.js (React), dan FilamentPHP.
 
-## Syarat Wajib (Prerequisites)
-
-Sebelum mulai, pastikan laptop Anda sudah terinstall:
-
-* **PHP:** Versi 8.2 atau lebih baru (Wajib)
-* **Composer:** Untuk install library PHP
-* **Node.js & NPM:** Untuk compile aset React
-* **MySQL:** Database (Bisa dari Laragon, XAMPP, atau DBngin)
-
 ---
 
-## Cara Install
+## 🚀 Panduan Instalasi (Pilih Salah Satu Jalur)
 
-Ikuti langkah ini satu per satu agar aplikasi berjalan lancar.
+Proyek ini dapat dijalankan menggunakan **DDEV (Docker)** atau secara **Lokal (Non-Docker)**.
 
-### 1. Clone Repository
-Download source code dari GitHub:
-```bash
-git clone https://github.com/USERNAME_KAMU/junelabel.git
-cd junelabel
-```
+### Opsi A: Menggunakan DDEV (Docker) - *Direkomendasikan*
+Gunakan metode ini jika Anda ingin lingkungan yang terisolasi dan instan.
 
-### 2. Install Library
-Download semua paket PHP dan JavaScript yang dibutuhkan:
-```bash
-composer install
-npm install
-```
-
-### 3. Setup Environment
-Duplikat file contoh konfigurasi:
-```bash
-cp .env.example .env
-```
-
-Lalu buka file `.env` di text editor, ubah bagian database sesuai konfigurasi laptop Anda:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=junelabel
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### 4. Generate Key Aplikasi
-```bash
-php artisan key:generate
-```
-
-### 5. Setup Database
-1. Buka aplikasi database manager (HeidiSQL / Laragon / TablePlus / phpMyAdmin)
-2. Buat database kosong baru dengan nama: `junelabel`
-3. Kembali ke terminal, jalankan migrasi untuk membuat tabel:
-```bash
-php artisan migrate
-```
-
-### 6. Buat Akun Admin (Filament)
-Buat user untuk login ke dashboard admin:
-```bash
-php artisan make:filament-user
-```
-(Ikuti instruksi di layar untuk input Nama, Email, dan Password)
-
----
-
-## Cara Menjalankan Aplikasi
-
-Gunakan dua terminal yang berjalan bersamaan.
-
-**Terminal 1** (Backend Server):
-```bash
-php artisan serve
-```
-
-**Terminal 2** (Frontend Asset Watcher):
-```bash
-npm run dev
-```
-
-**Akses Link:**
-- **Toko (Frontend):** [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- **Admin Panel:** [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
-
----
-
-## Catatan Penting
-
-1. Folder `vendor` dan `node_modules` tidak ada di GitHub, wajib menjalankan `composer install` & `npm install`
-2. File `.env` tidak ada di GitHub demi keamanan
-3. Jika muncul error **"Vite manifest not found"**, pastikan `npm run dev` sudah dijalankan minimal sekali
-4. Jika ada error tentang **"SQLSTATE"**, pastikan:
-   - Database sudah dibuat
-   - Koneksi database di `.env` sudah benar
-   - Service MySQL sedang berjalan
-5. Untuk development, tambahkan data dummy dengan:
+1. **Clone & Masuk ke Folder:**
    ```bash
-   php artisan db:seed
+   git clone https://github.com/kikiexe/junelabel.git
+   cd junelabel
+   ```
+2. **Jalankan DDEV:**
+   ```bash
+   ddev start
+   ```
+3. **Install Dependensi:**
+   ```bash
+   ddev composer install
+   ddev npm install
+   ddev npm run build
+   ```
+4. **Setup Environment:**
+   ```bash
+   cp .env.example .env
+   ddev artisan key:generate
+   ```
+5. **Migrasi & Seed:**
+   ```bash
+   ddev artisan migrate --seed
    ```
 
-## Troubleshooting
+---
 
-**Error:** `Port 8000 already in use`
-```bash
-# Matikan server yang sedang berjalan, atau
-php artisan serve --port=8001
+### Opsi B: Menggunakan Lokal (Non-Docker)
+Gunakan metode ini jika Anda ingin menjalankan aplikasi langsung di sistem operasi Anda.
+
+1. **Prasyarat:**
+   - PHP 8.3+, Composer 2.x, Node.js 20+, MySQL/MariaDB.
+2. **Clone & Install:**
+   ```bash
+   git clone https://github.com/kikiexe/junelabel.git
+   cd junelabel
+   composer install
+   npm install
+   ```
+3. **Setup Environment:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Edit file `.env` dan sesuaikan `DB_HOST=127.0.0.1` serta kredensial database lokal Anda.*
+4. **Migrasi & Seed:**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+---
+
+## ⚙️ Konfigurasi API (Wajib diisi di `.env`)
+
+Aplikasi ini membutuhkan API Key agar fitur berjalan:
+
+**A. Midtrans (Payment)**
+```env
+MIDTRANS_SERVER_KEY=SB-Mid-server-xxxx...
+MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxx...
+MIDTRANS_IS_PRODUCTION=false
 ```
 
-**Error:** `Class "Filament\Panel" not found`
-```bash
-composer require filament/filament
+**B. RajaOngkir (Shipping)**
+```env
+RAJAONGKIR_API_KEY=your_key_here
+RAJAONGKIR_ORIGIN_DISTRICT_ID=5473
 ```
 
-**Error:** `npm run dev tidak bekerja`
+---
+
+## 🏃 Cara Menjalankan Aplikasi
+
+| Lingkungan | Perintah Backend | Perintah Frontend |
+| :--- | :--- | :--- |
+| **DDEV** | Otomatis (via ddev) | `ddev npm run dev` |
+| **Lokal** | `php artisan serve` | `npm run dev` |
+
+---
+
+## 🛡️ Catatan Keamanan & Pengembangan
+
+### Penanganan Telescope (Anti-Error 500)
+Proyek ini menggunakan cara registrasi `TelescopeServiceProvider` yang aman di `AppServiceProvider.php`. 
+- **PENTING:** Jangan mendaftarkan manual di `bootstrap/providers.php`. 
+- Sistem akan mendeteksi secara otomatis apakah Anda berada di lingkungan `local` dan apakah paketnya terinstal sebelum menjalankannya. Ini mencegah Error 500 jika Anda melakukan `composer install --no-dev`.
+
+### Troubleshooting Layar Putih (Vite)
+Jika halaman muncul putih kosong (Error `ERR_CONNECTION_REFUSED` di konsol), pastikan aset sudah di-build atau server dev Vite berjalan:
 ```bash
-# Clear cache
-npm cache clean --force
-# Install ulang
-npm install
+# Untuk DDEV
+ddev npm run build
+# Untuk Lokal
+npm run build
 ```
+
+---
+© 2026 June Label.
