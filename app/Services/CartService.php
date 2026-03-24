@@ -152,6 +152,12 @@ class CartService
         return $this->getBaseQuery($request)->count();
     }
 
+    public function clearCart(Request $request)
+    {
+        // Akan menghapus semua row di database Cart yang berasosiasi dengan user ini
+        $this->getBaseQuery($request)->delete();
+    }
+
     protected function verifyOwnership(Request $request, Cart $item)
     {
         if (Auth::check()) {
