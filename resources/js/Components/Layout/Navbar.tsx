@@ -372,6 +372,8 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+      {/* Spacer to prevent content from hiding under fixed navbar */}
+      <div className="h-[60px] xl:h-[80px] w-full shrink-0" aria-hidden="true"></div>
       <CartSidebar />
     </>
   );
