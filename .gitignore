@@ -24,6 +24,7 @@ yarn-error.log
 /.nova
 /.phpunit.cache
 /.zed
+/vps_deployment_analysis.md
 
 # Laravel IDE Helper
 _ide_helper.php
