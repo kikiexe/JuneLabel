@@ -21,46 +21,42 @@ export default function HowToOrder() {
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-12">
             {[
               {
-                title: 'Browse Products',
-                desc: 'Explore our collection of hijabs. Click on the product you like to see more details.',
+                title: 'Pilih Koleksi',
+                desc: 'Jelajahi berbagai koleksi kami di halaman Collections dan temukan produk favorit Anda.',
               },
               {
-                title: 'Add to Cart',
-                desc: "Choose your preferred color and quantity, then click 'Add to Cart'.",
+                title: 'Tambahkan ke Keranjang',
+                desc: "Pilih detail seperti kuantitas, lalu klik 'Add to Cart' untuk memasukkan ke keranjang.",
               },
-              { title: 'Checkout', desc: "Review your cart and click 'Checkout'." },
+              { title: 'Checkout', desc: "Tinjau kembali pesanan Anda di halaman keranjang dan klik tombol 'Checkout'." },
               {
-                title: 'Details',
-                desc: 'Fill in your shipping details accurately to ensuring smooth delivery.',
-              },
-              {
-                title: 'Payment',
-                desc: 'Select your preferred payment method and complete the payment.',
+                title: 'Lengkapi Data',
+                desc: 'Isi alamat pengiriman dengan lengkap. Ongkos kirim akan dihitung otomatis oleh sistem RajaOngkir.',
               },
               {
-                title: 'Confirmation',
-                desc: 'You will receive an order confirmation email. Sit back and relax while we prepare your package!',
+                title: 'Pembayaran Aman',
+                desc: 'Pilih metode pembayaran (VA, QRIS, dll) melalui portal Midtrans dan selesaikan transaksi.',
+              },
+              {
+                title: 'Konfirmasi',
+                desc: 'Status pesanan Anda akan otomatis terupdate. Anda dapat memantau pesanan di halaman My Orders.',
               },
             ].map((step, index) => (
-              <div key={index} className="flex gap-6">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#7C634D] text-white flex items-center justify-center font-bold text-xl">
+              <div key={index} className="flex gap-6 items-start">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#7C634D] text-white flex items-center justify-center font-bold text-xl shadow-sm">
                   {index + 1}
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold mb-2" style={{ color: '#7C634D' }}>
                     {step.title}
                   </h3>
-                  <p className="text-[#7C634D]/80 leading-relaxed">{step.desc}</p>
+                  <p className="text-[#7C634D]/80 leading-relaxed font-medium">{step.desc}</p>
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="mt-12 bg-[#FFF6EC] p-6 rounded-lg text-[#7C634D]">
-            <p>Need help? Contact our Customer Service via WhatsApp if you encounter any issues.</p>
           </div>
         </div>
       </main>

@@ -255,8 +255,8 @@ export default function TermsConditions() {
                 </p>
                 <p>
                   <strong>Email:</strong>{' '}
-                  <a href="mailto:support@junelabel.com" className="underline hover:opacity-70">
-                    support@junelabel.com
+                  <a href="mailto:junelabelco@gmail.com" className="underline hover:opacity-70">
+                    junelabelco@gmail.com
                   </a>
                 </p>
                 <p>

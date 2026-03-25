@@ -23,47 +23,41 @@ export default function ShippingPolicy() {
 
           <div className="space-y-8 text-[#7C634D] leading-relaxed">
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Processing Time</h2>
+              <h2 className="text-2xl font-semibold mb-4">Waktu Pemrosesan</h2>
               <p className="text-[#7C634D]/80">
-                Orders are processed within 1-2 business days after payment confirmation. Orders
-                placed on weekends or public holidays will be processed on the next business day.
+                Pesanan Anda akan diproses dalam 1-2 hari kerja setelah pembayaran terverifikasi. Pesanan yang masuk pada hari Sabtu, Minggu, atau hari libur nasional akan diproses pada hari kerja berikutnya.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Shipping Methods</h2>
+              <h2 className="text-2xl font-semibold mb-4">Metode Pengiriman</h2>
               <p className="text-[#7C634D]/80 mb-4">
-                We partner with reliable logistics providers including JNE, J&T, Sicepat, and
-                GoSend/GrabExpress for same-day delivery (Jakarta area only).
+                Kami menggunakan layanan pengiriman terpercaya melalui integrasi <strong>RajaOngkir</strong> dengan pilihan kurir sebagai berikut:
               </p>
               <ul className="list-disc list-inside text-[#7C634D]/80 space-y-1 ml-4">
                 <li>
-                  <strong>Regular:</strong> 2-4 business days (Java), 3-7 business days (Outside
-                  Java).
+                  <strong>JNE:</strong> Layanan REG (Regular) dan YES (Yakin Esok Sampai).
                 </li>
                 <li>
-                  <strong>Express/Next Day:</strong> 1-2 business days.
+                  <strong>POS Indonesia:</strong> Layanan Pos Reguler dan Pos Nextday.
                 </li>
                 <li>
-                  <strong>Same Day:</strong> Order before 12:00 PM for same-day delivery.
+                  <strong>TIKI:</strong> Layanan Reguler dan ONS (Over Night Service).
                 </li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Shipping Rates</h2>
+              <h2 className="text-2xl font-semibold mb-4">Biaya Pengiriman</h2>
               <p className="text-[#7C634D]/80">
-                Shipping rates are calculated based on the weight of your order and your delivery
-                location. The final shipping cost will be displayed at checkout.
+                Biaya pengiriman dihitung secara otomatis berdasarkan berat total produk dan lokasi pengiriman Anda (kecamatan & kota). Anda dapat melihat estimasi biaya pengiriman di halaman Cart dan Checkout.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Order Tracking</h2>
+              <h2 className="text-2xl font-semibold mb-4">Pelacakan Pesanan</h2>
               <p className="text-[#7C634D]/80">
-                Once your order is shipped, you will receive a tracking number via email. You can
-                use this number to track your package on our "Track Order" page or the courier's
-                website.
+                Setelah pesanan dikirim, nomor resi akan diinformasikan melalui email dan dapat dilihat di halaman <strong>My Orders</strong>. Anda juga bisa menggunakan fitur <strong>Track Order</strong> di website kami untuk memantau perjalanan paket Anda.
               </p>
             </section>
           </div>
