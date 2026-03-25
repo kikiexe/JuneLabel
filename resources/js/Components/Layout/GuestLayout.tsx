@@ -4,9 +4,9 @@ import { PropsWithChildren } from 'react';
 
 export default function GuestLayout({ children }: PropsWithChildren) {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-grow pt-16">{children}</div>
+      <div className="flex-grow">{children}</div>
       <Footer />
     </div>
   );

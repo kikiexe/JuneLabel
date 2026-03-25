@@ -26,10 +26,10 @@ export default function Register() {
   return (
     <GuestLayout>
       <Head title="Register" />
-      <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-64px)]">
+      <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-60px)] xl:min-h-[calc(100vh-80px)]">
         <div className="hidden lg:flex lg:w-1/3 relative overflow-hidden">
           <img
-            src="/images/Login/login.jpeg"
+            src="/images/Login/login.webp"
             alt="Register Banner"
             className="absolute inset-0 w-full h-full object-cover"
           />
