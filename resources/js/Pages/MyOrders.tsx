@@ -127,7 +127,7 @@ export default function MyOrders({ auth, orders = [] }: MyOrdersProps) {
                 <div className="bg-gray-50 p-12 border border-gray-100 text-center">
                   <p className="text-gray-500 mb-4">You haven't placed any orders yet.</p>
                   <Link
-                    href={route('shop.index')}
+                    href={route('collections.index')}
                     className="inline-block bg-[#7C634D] text-white px-6 py-3 uppercase tracking-widest text-sm font-medium hover:bg-[#6B5440] transition-colors"
                   >
                     Start Shopping

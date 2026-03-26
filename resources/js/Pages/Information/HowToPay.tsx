@@ -23,29 +23,40 @@ export default function HowToPay() {
 
           <div className="space-y-12 text-[#7C634D]">
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Virtual Account (Bank Transfer)</h2>
-              <ol className="list-decimal list-inside space-y-2 text-[#7C634D]/80 ml-4">
-                <li>
-                  Select <strong>Virtual Account</strong> as your payment method during checkout.
-                </li>
-                <li>Choose your bank (BCA, Mandiri, BNI, BRI, etc.).</li>
-                <li>You will receive a unique Virtual Account number.</li>
-                <li>Open your mobile banking app or go to an ATM.</li>
-                <li>Select "Transfer" or "Payment" menu, then input the VA number.</li>
-                <li>Verify the amount and merchant name (JuneLabel).</li>
-                <li>Complete the transaction. Your order will be verified automatically.</li>
-              </ol>
+              <h2 className="text-2xl font-semibold mb-4">Portal Pembayaran Midtrans</h2>
+              <p className="text-[#7C634D]/80 mb-6 leading-relaxed">
+                Kami menggunakan portal pembayaran <strong>Midtrans</strong> untuk memastikan setiap transaksi Anda aman, cepat, dan otomatis terverifikasi. Anda tidak perlu melakukan konfirmasi manual setelah membayar.
+              </p>
+              
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-xl font-bold mb-3">1. Virtual Account (VA)</h3>
+                  <ol className="list-decimal list-inside space-y-2 text-[#7C634D]/80 ml-4">
+                    <li>Pilih <strong>Virtual Account</strong> pada halaman pembayaran Midtrans.</li>
+                    <li>Pilih bank Anda (BCA, Mandiri, BNI, BRI, dll).</li>
+                    <li>Salin nomor Virtual Account yang muncul.</li>
+                    <li>Gunakan m-Banking atau ATM untuk melakukan transfer ke nomor tersebut.</li>
+                    <li>Verifikasi akan dilakukan otomatis dalam hitungan detik.</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-bold mb-3">2. QRIS (GoPay, OVO, Dana, dll)</h3>
+                  <ol className="list-decimal list-inside space-y-2 text-[#7C634D]/80 ml-4">
+                    <li>Pilih <strong>QRIS</strong> sebagai metode pembayaran.</li>
+                    <li>Scan kode QR yang muncul di layar menggunakan aplikasi e-wallet Anda.</li>
+                    <li>Konfirmasi pembayaran di aplikasi e-wallet.</li>
+                    <li>Sistem akan mendeteksi pembayaran secara instan.</li>
+                  </ol>
+                </div>
+              </div>
             </section>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">E-Wallet (GoPay, OVO, ShopeePay)</h2>
-              <ol className="list-decimal list-inside space-y-2 text-[#7C634D]/80 ml-4">
-                <li>Select your preferred E-Wallet at checkout.</li>
-                <li>You will be redirected to the app or shown a QR code.</li>
-                <li>Scan the QR Code or confirm payment in the app.</li>
-                <li>Enter your PIN to authorize the payment.</li>
-                <li>Payment success will be detected automatically.</li>
-              </ol>
+            <section className="bg-blue-50/50 p-6 rounded-lg border border-blue-100 flex items-start gap-4">
+              <span className="text-2xl">💡</span>
+              <p className="text-sm text-blue-800 leading-relaxed">
+                <strong>Penting:</strong> Selalu periksa kembali nominal pembayaran Anda. Kami tidak pernah meminta pembayaran ke nomor rekening selain yang tertera di halaman resmi Midtrans.
+              </p>
             </section>
           </div>
         </div>

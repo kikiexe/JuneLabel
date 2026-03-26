@@ -24,13 +24,16 @@ export default function PaymentInformation() {
           <div className="space-y-12">
             <section>
               <h2 className="text-2xl font-semibold mb-6" style={{ color: '#7C634D' }}>
-                Accepted Payment Methods
+                Metode Pembayaran
               </h2>
+              <p className="text-[#7C634D]/80 mb-6 leading-relaxed">
+                Kami bekerja sama dengan <strong>Midtrans</strong> untuk menyediakan berbagai metode pembayaran yang aman dan terverifikasi secara otomatis.
+              </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {['Bank Transfer', 'Credit Card', 'E-Wallet', 'QRIS'].map((method) => (
+                {['Virtual Account', 'QRIS / GoPay', 'ShopeePay', 'Kartu Kredit'].map((method) => (
                   <div
                     key={method}
-                    className="bg-[#FFF6EC] p-4 rounded text-center text-[#7C634D] font-medium"
+                    className="bg-[#FFF6EC] p-4 rounded text-center text-[#7C634D] font-medium border border-[#7C634D]/10"
                   >
                     {method}
                   </div>
@@ -40,33 +43,30 @@ export default function PaymentInformation() {
 
             <section>
               <h2 className="text-2xl font-semibold mb-4" style={{ color: '#7C634D' }}>
-                Bank Transfer
+                Virtual Account (VA)
               </h2>
               <p className="text-[#7C634D]/80 mb-4 leading-relaxed">
-                You can make payments via bank transfer to our official accounts. Please ensure you
-                transfer the exact amount including the unique code if applicable.
+                Anda dapat melakukan pembayaran melalui Virtual Account bank ternama seperti <strong>BCA, Mandiri, BNI, BRI, dan Permata</strong>. Keuntungan menggunakan VA adalah konfirmasi pembayaran dilakukan secara otomatis dalam hitungan detik.
               </p>
-              <div className="bg-white border border-[#7C634D]/20 p-6 rounded-lg space-y-4">
-                <div className="flex justify-between items-center border-b border-[#7C634D]/10 pb-2">
-                  <span className="font-semibold text-[#7C634D]">BCA</span>
-                  <span className="text-[#7C634D]/80">123 456 7890 (June Label)</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-[#7C634D]/10 pb-2">
-                  <span className="font-semibold text-[#7C634D]">Mandiri</span>
-                  <span className="text-[#7C634D]/80">123 000 456 789 (June Label)</span>
-                </div>
-              </div>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-4" style={{ color: '#7C634D' }}>
-                Payment Confirmation
+                QRIS & E-Wallet
+              </h2>
+              <p className="text-[#7C634D]/80 mb-4 leading-relaxed">
+                Kami juga mendukung pembayaran via QRIS yang dapat dipindai menggunakan aplikasi m-Banking atau E-Wallet favorit Anda seperti <strong>GoPay, OVO, Dana, dan LinkAja</strong>. Pembayaran melalui ShopeePay juga tersedia.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-4" style={{ color: '#7C634D' }}>
+                Bantuan Pembayaran
               </h2>
               <p className="text-[#7C634D]/80 leading-relaxed">
-                After making a manual bank transfer, please confirm your payment through the
-                "Confirm Payment" page or send the proof of transaction to our WhatsApp admin at +62
-                822-8257-7216. Automatic payments (Midtrans, VA, E-Wallet) do not require manual
-                confirmation.
+                Jika Anda mengalami kendala saat melakukan pembayaran atau ingin menanyakan status transaksi, silakan hubungi tim Customer Service kami melalui WhatsApp di 
+                <a href="https://wa.me/6282123456789" className="font-bold ml-1 hover:underline">+62 821-2345-6789</a>. 
+                Kami tidak pernah meminta Anda untuk mengirimkan dana ke rekening pribadi atas nama perorangan.
               </p>
             </section>
           </div>

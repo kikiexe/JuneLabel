@@ -251,8 +251,8 @@ export default function PrivacyPolicy() {
               <p style={{ color: '#7C634D', lineHeight: '1.8' }}>
                 Jika Anda ingin berhenti berlangganan email di masa mendatang, Anda dapat mengirim
                 email kepada kami di{' '}
-                <a href="mailto:support@junelabel.com" className="underline hover:opacity-70">
-                  support@junelabel.com
+                <a href="mailto:junelabelco@gmail.com" className="underline hover:opacity-70">
+                  junelabelco@gmail.com
                 </a>
                 , and kami akan segera menghapus Anda dari SEMUA korespondensi.
               </p>

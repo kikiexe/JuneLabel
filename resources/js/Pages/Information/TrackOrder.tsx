@@ -157,7 +157,7 @@ export default function TrackOrder({ couriers }: TrackOrderProps) {
                   {/* Summary Card */}
                   <div className="bg-white border text-[#7C634D] p-6 rounded-lg shadow-sm">
                     <h3 className="font-bold text-lg mb-4 border-b pb-2">Detail Pengiriman</h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
                       <div>
                         <p className="opacity-60">Status</p>
                         <p className="font-bold text-green-600 uppercase">
@@ -168,15 +168,15 @@ export default function TrackOrder({ couriers }: TrackOrderProps) {
                         <p className="opacity-60">Layanan</p>
                         <p className="font-bold">{result.summary.service}</p>
                       </div>
-                      <div>
+                      <div className="overflow-hidden">
                         <p className="opacity-60">Pengirim</p>
-                        <p className="font-bold">{result.detail.shipper || '-'}</p>
-                        <p className="text-xs opacity-70">{result.detail.origin}</p>
+                        <p className="font-bold break-all">{result.detail.shipper || '-'}</p>
+                        <p className="text-xs opacity-70 break-all">{result.detail.origin}</p>
                       </div>
-                      <div>
+                      <div className="overflow-hidden">
                         <p className="opacity-60">Penerima</p>
-                        <p className="font-bold">{result.detail.receiver || '-'}</p>
-                        <p className="text-xs opacity-70">{result.detail.destination}</p>
+                        <p className="font-bold break-all">{result.detail.receiver || '-'}</p>
+                        <p className="text-xs opacity-70 break-all">{result.detail.destination}</p>
                       </div>
                     </div>
                   </div>
