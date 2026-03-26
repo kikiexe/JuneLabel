@@ -11,8 +11,7 @@ interface Props {
    */
   canonicalPath?: string;
   type?: string;
-  /** @deprecated Gunakan canonicalPath. Prop ini diabaikan. */
-  url?: string;
+  addBrand?: boolean;
 }
 
 export default function SeoHead({
@@ -21,6 +20,7 @@ export default function SeoHead({
   image,
   canonicalPath,
   type = 'website',
+  addBrand = true,
 }: Props) {
   const { appUrl } = usePage<{ appUrl: string }>().props as any;
 
@@ -31,7 +31,7 @@ export default function SeoHead({
     'JuneLabel comes with variety of cute and sweet colors as characteristic of Muslimah who always spread kindness. Comfortable daily hijab for your everyday wear.';
   const defaultImage = `${baseUrl}/images/junelabel.webp`;
 
-  const fullTitle = title ? `${title} - ${siteName}` : siteName;
+  const fullTitle = title ? (addBrand ? `${title} - ${siteName}` : title) : siteName;
 
   // Canonical URL: gunakan canonicalPath jika ada, fallback ke appUrl
   const canonicalUrl = canonicalPath

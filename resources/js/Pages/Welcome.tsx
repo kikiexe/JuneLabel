@@ -19,6 +19,7 @@ export default function Welcome({ newArrivals, bestSellers }: WelcomeProps) {
     <>
       <SeoHead
         title="Toko Hijab & Fashion Muslimah"
+        addBrand={false}
         description="Temukan koleksi hijab, pashmina, dan fashion muslimah ternyaman dengan warna-warna pastel yang manis. JuneLabel - Spread Kindness."
         canonicalPath="/"
       />
