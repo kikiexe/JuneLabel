@@ -24,6 +24,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     post(route('login'), {
+      replace: true,
       onSuccess: () => {
         refreshCart();
       },
