@@ -6,7 +6,7 @@ export default function GuestLayout({ children }: PropsWithChildren) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-grow">{children}</div>
+      <main className="flex-grow pt-16 xl:pt-20 flex flex-col">{children}</main>
       <Footer />
     </div>
   );

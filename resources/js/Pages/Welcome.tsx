@@ -24,7 +24,7 @@ export default function Welcome({ newArrivals, bestSellers }: WelcomeProps) {
       />
 
       <Navbar />
-      <main>
+      <main className="pt-16 xl:pt-20">
         <HeroSection />
         <BestSellerSection products={bestSellers} />
         <CopywritingSection />
