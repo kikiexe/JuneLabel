@@ -58,7 +58,7 @@ export default function Footer() {
         setShowToast(true);
         setEmail('');
 
-        // Auto hide toast after 5 seconds
+        // Auto hide toast after 5seconds
         setTimeout(() => {
           setShowToast(false);
         }, 5000);

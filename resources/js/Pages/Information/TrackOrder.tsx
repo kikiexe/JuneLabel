@@ -74,7 +74,10 @@ export default function TrackOrder({ couriers }: TrackOrderProps) {
         canonicalPath="/track-order"
       />
       <Navbar />
-      <main style={{ backgroundColor: '#ffffff' }} className="font-inter">
+      <main
+        style={{ backgroundColor: '#ffffff' }}
+        className="font-inter min-h-[calc(100vh-80px)] pt-16 xl:pt-20"
+      >
         <div className="max-w-4xl mx-auto px-6 md:px-16 py-16 md:py-24">
           <div className="mb-12">
             <h1

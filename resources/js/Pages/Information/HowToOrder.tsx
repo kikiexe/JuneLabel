@@ -7,7 +7,7 @@ export default function HowToOrder() {
     <>
       <Head title="How to Order - JuneLabel" />
       <Navbar />
-      <main style={{ backgroundColor: '#ffffff' }} className="font-inter">
+      <main style={{ backgroundColor: '#ffffff' }} className="font-inter pt-16 xl:pt-20">
         <div className="max-w-4xl mx-auto px-6 md:px-16 py-16 md:py-24">
           <div className="mb-12">
             <h1

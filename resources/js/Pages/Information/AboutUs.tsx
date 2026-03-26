@@ -15,7 +15,7 @@ export default function AboutUs() {
 
       <Navbar />
 
-      <main style={{ backgroundColor: '#ffffff' }} className="font-inter">
+      <main style={{ backgroundColor: '#ffffff' }} className="font-inter pt-16 xl:pt-20">
         {/* Content Section */}
         <div className="max-w-4xl mx-auto px-6 md:px-16 py-16 md:py-24">
           {/* Header */}

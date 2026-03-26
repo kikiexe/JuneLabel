@@ -21,7 +21,7 @@ export default function ForgotPassword({ status }: ForgotPasswordProps) {
   return (
     <GuestLayout>
       <Head title="Forgot Password" />
-      <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-60px)] xl:min-h-[calc(100vh-80px)]">
+      <div className="flex flex-1 overflow-hidden">
         {/* Banner Section */}
         <div className="hidden lg:flex lg:w-1/3 relative overflow-hidden">
           <img

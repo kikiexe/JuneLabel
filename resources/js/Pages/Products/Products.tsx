@@ -29,7 +29,7 @@ export default function ProductPage({ auth, product, relatedProducts }: Props) {
 
       <Navbar />
 
-      <main className="flex-grow">
+      <main className="flex-grow pt-16 xl:pt-20">
         <DetailSection product={product} />
         <RelatedProducts products={relatedProducts} />
       </main>

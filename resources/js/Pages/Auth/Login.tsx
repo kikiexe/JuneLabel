@@ -35,7 +35,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
   return (
     <GuestLayout>
       <Head title="Log in" />
-      <div className="flex flex-1 overflow-hidden min-h-[calc(100vh-60px)] xl:min-h-[calc(100vh-80px)]">
+      <div className="flex flex-1 overflow-hidden">
         <div className="hidden lg:flex lg:w-1/3 relative overflow-hidden">
           <img
             src="/images/Login/login.webp"
