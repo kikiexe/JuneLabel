@@ -87,6 +87,7 @@ class ProductResource extends Resource
                         ->label('Foto Utama (Thumbnail)')
                         ->directory('products')
                         ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/avif'])
                         ->imageEditor()
                         ->required(),
 
@@ -95,6 +96,7 @@ class ProductResource extends Resource
                         ->label('Galeri Foto Lainnya (Pose Beda)')
                         ->directory('products')
                         ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/avif'])
                         ->multiple()
                         ->reorderable()
                         ->panelLayout('grid')
