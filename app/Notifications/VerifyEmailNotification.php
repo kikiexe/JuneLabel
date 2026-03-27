@@ -6,16 +6,13 @@ use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailBase;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
  * Custom email verification notification
  * Template: resources/views/emails/verify-email.blade.php
  */
-class VerifyEmailNotification extends VerifyEmailBase implements ShouldQueue
+class VerifyEmailNotification extends VerifyEmailBase
 {
-    use Queueable;
 
     public function toMail($notifiable)
     {
