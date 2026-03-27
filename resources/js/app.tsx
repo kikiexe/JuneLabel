@@ -9,7 +9,11 @@ import { CartProvider } from './Contexts/CartContext';
 const appName = import.meta.env.VITE_APP_NAME || 'June Label';
 
 createInertiaApp({
-  title: (title) => title || appName,
+  title: (title) => {
+    const brand = 'June Label';
+    if (!title || title === 'Toko Hijab & Fashion Muslimah') return title || brand;
+    return `${title} - ${brand}`;
+  },
   resolve: (name) =>
     resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx')),
   setup({ el, App, props }) {

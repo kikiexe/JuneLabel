@@ -26,7 +26,7 @@ export default function Register() {
   return (
     <GuestLayout>
       <Head title="Register" />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 min-h-[calc(100vh-4rem)] xl:min-h-[calc(100vh-5rem)] overflow-hidden">
         <div className="hidden lg:flex lg:w-1/3 relative overflow-hidden">
           <img
             src="/images/Login/login.webp"
