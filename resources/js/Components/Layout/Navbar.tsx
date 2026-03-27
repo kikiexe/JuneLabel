@@ -1,5 +1,5 @@
 import { useState, useEffect, MouseEvent, KeyboardEvent } from 'react';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import {
   Menu,
   Search,
@@ -21,7 +21,9 @@ import CartSidebar from '@/Components/Cart/CartSidebar';
 
 export default function Navbar() {
   const { getCartCount, openCart } = useCart();
-  // ... existing code ...
+  const { auth } = usePage().props as any;
+  const isLoggedIn = !!auth?.user;
+
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -213,7 +215,7 @@ export default function Navbar() {
             </button>
 
             <Link
-              href={Cookies.get('token') ? '/dashboard' : '/login'}
+              href={isLoggedIn ? '/dashboard' : '/login'}
               className="hover:opacity-70 transition-opacity hidden xl:block"
             >
               <User size={20} color="#7C634D" strokeWidth={2} />
@@ -328,11 +330,11 @@ export default function Navbar() {
 
             <div className="p-6 border-t border-[#7C634D]/10">
               <Link
-                href={Cookies.get('token') ? '/dashboard' : '/login'}
+                href={isLoggedIn ? '/dashboard' : '/login'}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block mb-6 text-sm font-medium text-[#7C634D] hover:opacity-70 uppercase tracking-wide"
               >
-                {Cookies.get('token') ? 'Dashboard' : 'Log In'}
+                {isLoggedIn ? 'Dashboard' : 'Log In'}
               </Link>
 
               <div className="flex gap-4">

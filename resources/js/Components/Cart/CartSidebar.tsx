@@ -49,12 +49,13 @@ export default function CartSidebar() {
               <ShoppingBag size={48} strokeWidth={1.5} className="mb-4" />
               <p className="font-medium mb-1">Your cart is empty</p>
               <p className="text-sm">Start adding some items!</p>
-              <button
+              <Link
+                href={route('collections.all')}
                 onClick={closeCart}
                 className="mt-6 text-sm underline underline-offset-4 hover:opacity-80"
               >
                 Continue Shopping
-              </button>
+              </Link>
             </div>
           ) : (
             <div className="space-y-6">

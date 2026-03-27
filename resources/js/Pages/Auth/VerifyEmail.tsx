@@ -20,7 +20,7 @@ export default function VerifyEmail({ status }: VerifyEmailProps) {
     <GuestLayout>
       <Head title="Verify Email" />
 
-      <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
+      <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[calc(100vh-4rem)] xl:min-h-[calc(100vh-5rem)]">
         <div className="w-full max-w-lg bg-white p-8 md:p-10 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-neutral-100 text-center">
           {/* Icon */}
           <div className="mx-auto w-20 h-20 bg-neutral-50 rounded-full flex items-center justify-center mb-6 ring-8 ring-neutral-50/50">
