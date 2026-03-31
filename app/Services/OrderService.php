@@ -113,7 +113,8 @@ class OrderService
             }
 
             // 5. Setup Midtrans Payment
-            $this->setupPayment($order, $orderItemsData, $shippingCost, $grossAmount, $data);
+            // $this->setupPayment($order, $orderItemsData, $shippingCost, $grossAmount, $data);
+
 
             return $order;
         });
