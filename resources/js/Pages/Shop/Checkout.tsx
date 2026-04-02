@@ -141,7 +141,7 @@ export default function Checkout() {
       // Calculate total weight using actual product weights
       // If product doesn't have weight attribute, default to 200 grams (pashmina average)
       const totalWeight = cartItems.reduce((sum, item) => {
-        const productWeight = item.weight || (item.product as any)?.weight || 200; // grams
+        const productWeight = item.weight || (item as any).product?.weight || 200; // grams
         return sum + item.quantity * productWeight;
       }, 0);
 
@@ -535,8 +535,8 @@ export default function Checkout() {
                 {cartItems.map((item) => {
                   const itemPrice =
                     typeof item.price === 'string' ? parseFloat(item.price) : item.price;
-                  const itemImage = item.product?.image || (item as any).image;
-                  const itemName = item.product?.name || (item as any).name;
+                  const itemImage = (item as any).product?.image || (item as any).image;
+                  const itemName = (item as any).product?.name || (item as any).name;
 
                   return (
                     <div key={item.id} className="flex gap-4 items-start">
