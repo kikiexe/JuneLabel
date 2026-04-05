@@ -276,7 +276,7 @@ class OrderService
         ]);
     }
 
-    protected function sendPaymentSuccessEmails(Order $order): void
+    public function sendPaymentSuccessEmails(Order $order): void
     {
         // Avoid duplicate emails
         if ($order->payment_email_sent) {
