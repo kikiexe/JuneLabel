@@ -141,7 +141,7 @@ export default function Checkout() {
       // Calculate total weight using actual product weights
       // If product doesn't have weight attribute, default to 200 grams (pashmina average)
       const totalWeight = cartItems.reduce((sum, item) => {
-        const productWeight = item.weight || (item.product as any)?.weight || 200; // grams
+        const productWeight = item.weight || (item as any).product?.weight || 200; // grams
         return sum + item.quantity * productWeight;
       }, 0);
 
@@ -433,6 +433,54 @@ export default function Checkout() {
                   </div>
                 )}
 
+                {/* Payment Method Section */}
+                <div className="pt-6 border-t border-[#7C634D]/10">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-4">
+                    Payment Method
+                  </label>
+                  
+                  <div className="space-y-3">
+                    {/* Manual Transfer (Active/Default) */}
+                    <div className="p-4 border-2 border-[#7C634D] bg-[#7C634D]/5 rounded cursor-pointer transition-all">
+                      <div className="flex justify-between items-center">
+                        <div className="flex-grow">
+                          <p className="font-bold text-sm text-[#7C634D]">
+                            Manual Bank Transfer
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Transfer ke Rekening BCA, verifikasi melalui WhatsApp.
+                          </p>
+                        </div>
+                        <div className="text-right ml-4">
+                          <div className="w-4 h-4 rounded-full border-4 border-[#7C634D] bg-white"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Auto Payment / Midtrans (Disabled) */}
+                    <div className="p-4 border border-gray-200 bg-gray-50 rounded cursor-not-allowed opacity-60">
+                      <div className="flex justify-between items-center">
+                        <div className="flex-grow">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-bold text-sm text-gray-500">
+                              Instant Payment Method
+                            </p>
+                            <span className="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                              In Progress
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            Virtual Account, QRIS, e-Wallet (Otomatis via Midtrans).
+                          </p>
+                        </div>
+                        <div className="text-right ml-4">
+                          <div className="w-4 h-4 rounded-full border border-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
                     Shipping Address <span className="text-red-500">*</span>
@@ -487,8 +535,8 @@ export default function Checkout() {
                 {cartItems.map((item) => {
                   const itemPrice =
                     typeof item.price === 'string' ? parseFloat(item.price) : item.price;
-                  const itemImage = item.product?.image || (item as any).image;
-                  const itemName = item.product?.name || (item as any).name;
+                  const itemImage = (item as any).product?.image || (item as any).image;
+                  const itemName = (item as any).product?.name || (item as any).name;
 
                   return (
                     <div key={item.id} className="flex gap-4 items-start">

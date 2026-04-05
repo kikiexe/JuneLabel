@@ -113,7 +113,8 @@ class OrderService
             }
 
             // 5. Setup Midtrans Payment
-            $this->setupPayment($order, $orderItemsData, $shippingCost, $grossAmount, $data);
+            // $this->setupPayment($order, $orderItemsData, $shippingCost, $grossAmount, $data);
+
 
             return $order;
         });
@@ -275,7 +276,7 @@ class OrderService
         ]);
     }
 
-    protected function sendPaymentSuccessEmails(Order $order): void
+    public function sendPaymentSuccessEmails(Order $order): void
     {
         // Avoid duplicate emails
         if ($order->payment_email_sent) {

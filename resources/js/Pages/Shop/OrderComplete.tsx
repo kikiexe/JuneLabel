@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import Navbar from '@/Components/Layout/Navbar';
 import Footer from '@/Components/Layout/Footer';
@@ -28,27 +28,7 @@ export default function OrderComplete({ order }: OrderCompleteProps) {
     }).format(price);
   };
 
-  const checkPaymentStatus = async () => {
-    try {
-      const response = await fetch(`/midtrans/check-status/${order.order_id}`);
-      const data = await response.json();
-      if (data.status === 'success' && data.order_status === 'success') {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('Error checking payment status:', error);
-    }
-  };
 
-  // Auto-check status on mount if pending
-  useEffect(() => {
-    if (order.payment_status === 'pending') {
-      checkPaymentStatus();
-      // Poll every 5 seconds just in case
-      const interval = setInterval(checkPaymentStatus, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [order.payment_status]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF6EC] font-inter">
@@ -96,55 +76,34 @@ export default function OrderComplete({ order }: OrderCompleteProps) {
           </div>
 
           <div className="flex flex-col gap-3">
-            {/* Manual Check Status Button */}
+            {/* Payment Instructions for Manual Transfer */}
             {order.payment_status === 'pending' && (
-              <button
-                onClick={checkPaymentStatus}
-                className="w-full border border-[#7C634D] text-[#7C634D] py-3 font-bold text-sm tracking-widest uppercase hover:bg-[#7C634D]/10 transition-colors flex items-center justify-center gap-2"
-              >
-                Check Payment Status
-              </button>
-            )}
-            {/* Midtrans Payment Button */}
-            {order.snap_token && order.payment_status === 'pending' && (
-              <button
-                onClick={() => {
-                  if (window.snap) {
-                    window.snap.pay(order.snap_token!, {
-                      onSuccess: function (result: any) {
-                        console.log('Payment success:', result);
-                        window.location.href = `/order/${order.order_id}`;
-                      },
-                      onPending: function (result: any) {
-                        console.log('Payment pending:', result);
-                        alert('Menunggu pembayaran Anda!');
-                      },
-                      onError: function (result: any) {
-                        console.log('Payment error:', result);
-                        alert('Pembayaran gagal! Silakan coba lagi.');
-                      },
-                      onClose: function () {
-                        console.log('Payment popup closed');
-                      },
-                    });
-                  } else {
-                    alert('Payment system is loading, please try again.');
-                  }
-                }}
-                className="w-full bg-[#7C634D] text-white py-3 font-bold text-sm tracking-widest uppercase hover:bg-[#5A4935] transition-colors flex items-center justify-center gap-2"
-              >
-                Pay Now
-              </button>
+              <div className="bg-[#7C634D]/5 p-6 rounded-sm mb-4 text-left border border-[#7C634D]/10">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[#7C634D] mb-4">
+                  Instruksi Pembayaran
+                </h3>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  Silakan lakukan pembayaran sejumlah <strong className="text-[#7C634D]">{formatPrice(order.gross_amount)}</strong> ke rekening berikut:
+                </p>
+                <div className="bg-white p-4 rounded-sm border border-dashed border-[#7C634D]/30 mb-4">
+                  <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Bank BCA</div>
+                  <div className="text-lg font-bold text-[#7C634D] font-mono tracking-wider mb-1">0910194984</div>
+                  <div className="text-sm font-medium text-gray-700">a.n. Vera Veronica</div>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed text-center">
+                  Setelah berhasil transfer, mohon kirimkan bukti pembayaran Anda melalui WhatsApp dengan menekan tombol di bawah.
+                </p>
+              </div>
             )}
 
             {/* WhatsApp Contact */}
             <a
-              href={`https://wa.me/${CONTACT_INFO.whatsapp}?text=Halo%20June%20Label,%20saya%20sudah%20melakukan%20pemesanan%20dengan%20kode%20${order.order_id}.%20Mohon%20info%20pembayarannya.`}
+              href={`https://wa.me/${CONTACT_INFO.whatsapp}?text=Halo%20June%20Label,%20saya%20sudah%20melakukan%20pembayaran%20untuk%20pesanan%20dengan%20kode%20${order.order_id}.%20Berikut%20bukti%20transfernya:`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full bg-[#25D366] text-white py-3 font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
-              Confirm via WhatsApp <ArrowRight size={16} />
+              Konfirmasi via WhatsApp <ArrowRight size={16} />
             </a>
 
             {/* Continue Shopping */}
